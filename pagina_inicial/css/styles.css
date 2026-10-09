@@ -1,0 +1,424 @@
+/* Paleta de Cores e Identidade Visual Netflix */
+:root {
+  --net-bg: #141414;
+  --net-surface: #1f1f1f;
+  --net-red: #E50914;
+  --net-red-hover: #b20710;
+  --net-text: #ffffff;
+  --net-gray: #808080;
+  --net-gray-light: #b3b3b3;
+}
+
+* { box-sizing: border-box; }
+body {
+<<<<<<< HEAD
+  margin: 0; font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--net-bg); color: var(--net-text); overflow-x: hidden;
+=======
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--net-bg);
+  color: var(--net-text);
+  overflow-x: hidden;
+>>>>>>> 9504bc687cc4acd84b2de02efc8277c457b4baee
+}
+
+/* HEADER FIXO */
+.netflix-header {
+<<<<<<< HEAD
+  position: fixed; top: 0; left: 0; width: 100%; height: 68px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.9) 10%, rgba(20,20,20,0));
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 4%; z-index: 1000; transition: background-color 0.3s;
+=======
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 68px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.9) 10%, rgba(20,20,20,0));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4%;
+  z-index: 1000;
+  transition: background-color 0.3s;
+>>>>>>> 9504bc687cc4acd84b2de02efc8277c457b4baee
+}
+
+.nav-left { display: flex; align-items: center; gap: 40px; }
+.netflix-logo {
+<<<<<<< HEAD
+  color: var(--net-red) !important; font-family: 'Bebas Neue', sans-serif !important;
+  font-size: 38px !important; letter-spacing: 4px !important; margin: 0;
+}
+
+.nav-links { display: flex; gap: 20px; }
+.nav-links a { text-decoration: none; color: var(--net-gray-light); font-size: 14px; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--net-text); font-weight: 700; }
+
+.nav-right { display: flex; align-items: center; gap: 15px; }
+#search {
+  background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 14px; border-radius: 4px; color: var(--net-text); font-size: 14px;
+  width: 220px; transition: width 0.3s, border-color 0.3s;
+}
+#search:focus { width: 280px; border-color: var(--net-text); outline: none; background: rgba(0, 0, 0, 0.9); }
+
+.btn-admin {
+  background-color: var(--net-red); color: var(--net-text); border: none; padding: 8px 16px;
+  border-radius: 4px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.2s;
+}
+.btn-admin:hover { background-color: var(--net-red-hover); }
+
+/* MENU DROPDOWN DE PERFIL */
+.profile-menu { position: relative; display: inline-block; cursor: pointer; padding: 10px 0; }
+.profile-avatar { display: flex; align-items: center; gap: 8px; }
+.profile-avatar img { width: 32px; height: 32px; border-radius: 4px; object-fit: cover; }
+.caret {
+  width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
+  border-top: 5px solid white; transition: transform 0.3s;
+}
+.profile-menu:hover .caret { transform: rotate(180deg); }
+
+.profile-dropdown {
+  display: none; position: absolute; right: 0; top: 50px;
+  background-color: rgba(0, 0, 0, 0.9); border: 1px solid #333; min-width: 200px;
+  border-radius: 4px; padding: 10px 0; z-index: 2000; box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+}
+.profile-menu:hover .profile-dropdown { display: block; }
+.dropdown-header { display: flex; align-items: center; gap: 10px; padding: 10px 15px; font-weight: 700; font-size: 14px; }
+.dropdown-header img { width: 32px; height: 32px; border-radius: 4px; }
+.dropdown-divider { height: 1px; background-color: #333; margin: 5px 0; }
+.profile-dropdown a {
+  color: var(--net-gray-light); text-decoration: none; display: flex; align-items: center; gap: 10px;
+  padding: 10px 15px; font-size: 13px; transition: color 0.2s;
+}
+.profile-dropdown a:hover { color: var(--net-text); text-decoration: underline; }
+
+/* BANNER HERO */
+.netflix-hero {
+  position: relative; height: 55vh;
+  background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+  display: flex; align-items: flex-end; padding: 0 4% 6vh 4%;
+}
+.hero-vignette {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+=======
+  color: var(--net-red);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.nav-links { display: flex; gap: 20px; }
+.nav-links a {
+  text-decoration: none;
+  color: var(--net-gray-light);
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--net-text);
+  font-weight: 700;
+}
+
+.nav-right { display: flex; align-items: center; gap: 15px; }
+#search {
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 14px;
+  border-radius: 4px;
+  color: var(--net-text);
+  font-size: 14px;
+  width: 220px;
+  transition: width 0.3s, border-color 0.3s;
+}
+#search:focus {
+  width: 280px;
+  border-color: var(--net-text);
+  outline: none;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.btn-admin {
+  background-color: var(--net-red);
+  color: var(--net-text);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-admin:hover { background-color: var(--net-red-hover); }
+
+/* BANNER HERO (DESTAQUE CINEMATOGRÁFICO) */
+.netflix-hero {
+  position: relative;
+  height: 55vh;
+  background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1600&q=80') no-repeat center center/cover;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 4% 6vh 4%;
+}
+.hero-vignette {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+>>>>>>> 9504bc687cc4acd84b2de02efc8277c457b4baee
+  background: linear-gradient(180deg, rgba(20,20,20,0.2) 20%, rgba(20,20,20,0.8) 80%, var(--net-bg) 100%);
+  pointer-events: none;
+}
+.hero-info { max-width: 600px; z-index: 2; }
+<<<<<<< HEAD
+.hero-badge { color: var(--net-red); font-weight: 900; letter-spacing: 3px; font-size: 11px; display: block; margin-bottom: 8px; }
+.hero-info h2 { font-size: 38px; margin: 0 0 10px 0; font-weight: 700; }
+.hero-info p { font-size: 14px; color: var(--net-gray-light); line-height: 1.4; margin: 0; }
+
+/* FILTROS DE CATEGORIA */
+.categories-section { padding: 10px 4%; }
+.categories-flex { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip {
+  background-color: rgba(109, 109, 110, 0.4); border: none; padding: 6px 14px;
+  border-radius: 4px; color: var(--net-text); font-size: 13px; cursor: pointer; transition: 0.2s;
+}
+.chip:hover, .chip.active { background-color: var(--net-text); color: var(--net-bg); font-weight: 700; }
+
+/* FILEIRAS (CARROSSEL) */
+.netflix-main { padding: 0 0 50px 0; overflow: hidden; }
+.netflix-row { margin-bottom: 3vw; position: relative; }
+.row-title { font-size: 1.4vw; font-weight: 700; margin: 0 4% 10px 4%; line-height: 1.3; }
+
+.row-container { position: relative; }
+.slider-btn {
+  position: absolute; top: 0; bottom: 0; width: 4%; background: rgba(0,0,0,0.5); color: white; border: none;
+  font-size: 2vw; cursor: pointer; z-index: 10; opacity: 0; transition: opacity 0.2s;
+}
+.row-container:hover .slider-btn { opacity: 1; }
+.slider-btn.prev { left: 0; border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+.slider-btn.next { right: 0; border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
+.slider-btn:hover { background: rgba(0,0,0,0.8); font-size: 2.5vw; }
+
+.row-sliders { display: flex; gap: 10px; padding: 20px 4%; overflow-x: auto; scroll-behavior: smooth; scrollbar-width: none; }
+.row-sliders::-webkit-scrollbar { display: none; }
+
+/* CARD DO LIVRO (TAMANHO REDUZIDO) */
+.book-card {
+  flex: 0 0 calc(100% / 7 - 10px); /* Dividido por 7 em vez de 6 para ficar menor e mais elegante */
+  background-color: var(--net-surface); border-radius: 4px; overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; display: flex; flex-direction: column; position: relative;
+}
+@media(max-width: 1400px) { .book-card { flex: 0 0 calc(100% / 6 - 10px); } }
+@media(max-width: 1100px) { .book-card { flex: 0 0 calc(100% / 5 - 10px); } .row-title{font-size: 18px;} }
+@media(max-width: 850px) { .book-card { flex: 0 0 calc(100% / 4 - 10px); } .row-title{font-size: 16px;} .nav-links { display: none; } .hero-info h2 { font-size: 24px; } }
+@media(max-width: 550px) { .book-card { flex: 0 0 calc(100% / 3 - 10px); } }
+
+.book-card:hover { transform: scale(1.15); box-shadow: 0 10px 25px rgba(0,0,0,0.8); z-index: 20; }
+
+.book-cover { position: relative; aspect-ratio: 2 / 3; width: 100%; background-color: #2b2b2b; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.book-cover img { width: 100%; height: 100%; object-fit: cover; }
+
+/* BOTÃO CURTIR / MINHA LISTA NA CAPA */
+.btn-like {
+  position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.4);
+  color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 12px; transition: all 0.2s; z-index: 15;
+}
+.btn-like:hover { background: rgba(0,0,0,0.9); transform: scale(1.1); border-color: white; }
+.btn-like.liked { border-color: var(--net-red); color: var(--net-red); }
+
+.book-details { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; }
+.book-meta-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; min-height: 20px; }
+.book-genre { font-size: 9px; background-color: rgba(255, 255, 255, 0.1); color: var(--net-gray-light); padding: 3px 6px; border-radius: 3px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55%; }
+.badge-disponivel { font-size: 9px; background-color: rgba(16, 185, 129, 0.2); color: #10b981; padding: 2px 6px; border-radius: 3px; font-weight: 700; white-space: nowrap; }
+.badge-indisponivel { font-size: 9px; background-color: rgba(229, 9, 20, 0.2); color: var(--net-red); padding: 2px 6px; border-radius: 3px; font-weight: 700; white-space: nowrap; }
+.book-title { font-size: 12px; font-weight: 700; margin: 0 0 4px 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 28px; }
+.book-author { font-size: 10px; color: var(--net-gray); margin: 0 0 10px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.btn-reservar { margin-top: auto; background-color: var(--net-red); color: white; border: none; padding: 6px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; transition: background 0.2s; width: 100%; }
+.btn-reservar:hover { background-color: var(--net-red-hover); }
+
+/* GRID DE BUSCA */
+.books-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; padding: 0 4%; }
+
+.netflix-footer { padding: 30px 4%; border-top: 1px solid rgba(255,255,255,0.1); color: var(--net-gray); font-size: 12px; }
+=======
+.hero-badge {
+  color: var(--net-red);
+  font-weight: 900;
+  letter-spacing: 3px;
+  font-size: 11px;
+  display: block;
+  margin-bottom: 8px;
+}
+.hero-info h2 { font-size: 38px; margin: 0 0 10px 0; font-weight: 700; }
+.hero-info p { font-size: 14px; color: var(--net-gray-light); line-height: 1.4; margin: 0; }
+
+/* FILTROS DE CATEGORIA (CHIPS) */
+.categories-section { padding: 10px 4%; }
+.categories-flex { display: flex; gap: 10px; flex-wrap: wrap; }
+.chip {
+  background-color: rgba(109, 109, 110, 0.4);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  color: var(--net-text);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.chip:hover, .chip.active {
+  background-color: var(--net-text);
+  color: var(--net-bg);
+  font-weight: 700;
+}
+
+/* VITRINE / GRID DE CARDS ESTILO PÔSTER */
+.netflix-main { padding: 20px 4% 50px 4%; }
+.row-title { font-size: 20px; font-weight: 700; margin-bottom: 15px; }
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 15px;
+}
+
+/* CARD DO LIVRO PADRONIZADO E ALINHADO */
+.book-card {
+  background-color: var(--net-surface);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Efeito de Zoom Flutuante Clássico da Netflix */
+.book-card:hover {
+  transform: scale(1.08);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+  z-index: 10;
+}
+
+.book-cover {
+  height: 240px;
+  background-color: #2b2b2b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.book-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* CONTEÚDO DO CARD EM COLUNA FLEXÍVEL */
+.book-details {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* TOPO DO CARD (Género e Status) */
+.book-meta-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  min-height: 20px;
+}
+
+.book-genre {
+  font-size: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--net-gray-light);
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+  letter-spacing: 0.5px;
+}
+
+.badge-disponivel {
+  font-size: 9px;
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge-indisponivel {
+  font-size: 9px;
+  background-color: rgba(229, 9, 20, 0.2);
+  color: var(--net-red);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.book-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 32px;
+}
+
+.book-author {
+  font-size: 11px;
+  color: var(--net-gray);
+  margin: 0 0 12px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* BOTÃO DE PRÉ-RESERVA FIXADO NO RODAPÉ DO CARD */
+.btn-reservar {
+  margin-top: auto;
+  background-color: var(--net-red);
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+}
+.btn-reservar:hover {
+  background-color: var(--net-red-hover);
+}
+
+/* RODAPÉ */
+.netflix-footer {
+  padding: 30px 4%;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  color: var(--net-gray);
+  font-size: 12px;
+}
+
+@media(max-width: 768px) {
+  .nav-links { display: none; }
+  .hero-info h2 { font-size: 24px; }
+  .books-grid { grid-template-columns: repeat(2, 1fr); }
+}
+>>>>>>> 9504bc687cc4acd84b2de02efc8277c457b4baee

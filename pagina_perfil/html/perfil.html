@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BookHub — Conta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/perfil/css/perfil.css">
+  <style>
+    .site-logo { color: #e50914 !important; text-decoration: none !important; font-family: 'Bebas Neue', sans-serif !important; font-size: 38px !important; letter-spacing: 4px !important; }
+    
+    /* Grade rolável de avatares no modal de perfil */
+    .avatar-scroll-container {
+      max-height: 130px;
+      overflow-y: auto;
+      background: #f9f9f9;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .avatar-grid-modal {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      justify-items: center;
+    }
+    .avatar-option-modal {
+      width: 55px; height: 55px; border-radius: 4px; cursor: pointer;
+      border: 2px solid transparent; opacity: 0.5; transition: 0.2s; object-fit: cover;
+    }
+    .avatar-option-modal:hover { opacity: 1; }
+    .avatar-option-modal.selected { border-color: var(--net-red); opacity: 1; transform: scale(1.05); box-shadow: 0 0 8px rgba(229,9,20,0.4); }
+  </style>
+</head>
+<body>
+  <header class="netflix-header">
+    <a href="/" class="site-logo">BOOKHUB</a>
+  </header>
+
+  <main class="conta-container">
+    <h2>Conta</h2>
+    <div class="divisoria"></div>
+
+    <div class="conta-grid">
+      <aside class="conta-menu">
+        <div class="menu-item ativo" id="tabVisaoGeral">Visão geral</div>
+        <div class="menu-item" id="tabHistorico">Histórico de Reservas</div>
+      </aside>
+
+      <section class="conta-conteudo">
+        <!-- PAINEL 1: Visão Geral -->
+        <div id="painelVisaoGeral" class="painel-ativo">
+          <div class="card-painel">
+            <div class="header-linha">
+              <div style="display: flex; align-items: center; gap: 15px;">
+                <img id="avatarDisplay" src="/img/avatar1.png" alt="Avatar" style="width: 70px; height: 70px; border-radius: 4px; object-fit: cover;">
+                <h3>Detalhes do Perfil</h3>
+              </div>
+              <button id="btnAbrirEdicao" class="btn-editar-perfil">✏️ Editar Perfil</button>
+            </div>
+            
+            <div class="info-linha"><span class="label">Username:</span><span class="valor" id="infoUsername">-</span></div>
+            <div class="info-linha"><span class="label">Nome Completo:</span><span class="valor" id="infoNome">-</span></div>
+            <div class="info-linha"><span class="label">E-mail:</span><span class="valor" id="infoEmail">-</span></div>
+            <div class="info-linha"><span class="label">Carteira MetaMask:</span><span class="valor carteira" id="infoWallet">-</span></div>
+          </div>
+          <div class="card-painel logout-section"><button id="btnDesconectar" class="btn-logout">Sair da conta</button></div>
+        </div>
+
+        <!-- PAINEL 2: Histórico -->
+        <div id="painelHistorico" style="display: none;">
+          <div class="card-painel">
+            <h3>Histórico de Livros Reservados</h3>
+            <div class="tabela-wrapper">
+              <table class="tabela-historico">
+                <thead><tr><th>Livro</th><th>Status</th><th>Data do Pedido</th></tr></thead>
+                <tbody id="tabelaHistorico"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- MODAL EDIÇÃO COM ESCOLHA DE AVATAR ROLÁVEL -->
+  <div id="modalEdicao" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-height: 90vh; overflow-y: auto;">
+      <h3>Editar Perfil</h3>
+      <form id="formEditarPerfil">
+        <div class="input-group">
+          <label>Trocar Avatar (Role para ver todos)</label>
+          <div class="avatar-scroll-container">
+            <div class="avatar-grid-modal" id="editAvatarGrid">
+              <img src="/img/avatar1.png" class="avatar-option-modal" data-src="/img/avatar1.png">
+              <img src="/img/avatar2.png" class="avatar-option-modal" data-src="/img/avatar2.png">
+              <img src="/img/avatar3.png" class="avatar-option-modal" data-src="/img/avatar3.png">
+              <img src="/img/avatar4.png" class="avatar-option-modal" data-src="/img/avatar4.png">
+              <img src="/img/avatar5.png" class="avatar-option-modal" data-src="/img/avatar5.png">
+              <!-- Adicione mais tags <img src="/img/avatarX.png" ...> aqui conforme criar novos avatares -->
+            </div>
+          </div>
+          <input type="hidden" id="editAvatarInput" value="">
+        </div>
+        
+        <div class="input-group"><label>Carteira MetaMask</label><input type="text" id="editWallet" disabled></div>
+        <div class="input-group"><label>Nome Completo</label><input type="text" id="editNome" required></div>
+        <div class="input-group"><label>Username</label><input type="text" id="editUsername" required></div>
+        <div class="input-group"><label>E-mail</label><input type="email" id="editEmail" required></div>
+        <div class="divisoria" style="margin: 15px 0;"></div>
+        <div class="input-group">
+          <label style="color: var(--net-red); font-weight: 500;">Senha Atual (Obrigatória)</label>
+          <input type="password" id="editSenha" required placeholder="Digite sua senha cadastrada">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-salvar-edicao">Salvar</button>
+          <button type="button" id="btnCancelarEdicao" class="btn-cancelar-edicao">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/perfil/js/perfil.js"></script>
+</body>
+</html>

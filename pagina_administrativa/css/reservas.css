@@ -1,0 +1,22 @@
+@import url('/admin/css/livros.css');
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.badge-pendente { background: #fff0a8; color: #854d0e; }
+.badge-aceita { background: #bbf7d0; color: #166534; }
+.badge-recusada { background: #fecaca; color: #991b1b; }
+
+.btn-action {
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #fff;
+  margin-right: 5px;
+}

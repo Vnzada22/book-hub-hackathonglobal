@@ -1,0 +1,84 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BookHub — Entrar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/login/css/login.css">
+</head>
+<body>
+  <div class="netflix-login-bg">
+    <div class="vignette-overlay"></div>
+    
+    <header class="login-header">
+      <a href="/" class="site-logo">BOOKHUB</a>
+    </header>
+
+    <main class="login-container">
+      <div class="login-box">
+        
+        <!-- TELA DE LOGIN / CONEXÃO METAMASK -->
+        <form id="formLogin" class="form-active">
+          <h2>Entrar</h2>
+          <p class="login-subtitle" style="color: #737373; margin-bottom: 20px; font-size: 14px;">Conecte sua carteira MetaMask para acessar a plataforma.</p>
+          
+          <button type="button" id="btnConectarMetaMask" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            🦊 Conectar com MetaMask
+          </button>
+          
+          <div class="form-footer">
+            <p>Novo por aqui? <a href="#" id="linkIrCadastro">Cadastre-se aqui.</a></p>
+          </div>
+        </form>
+
+        <!-- FORMULÁRIO DE CADASTRO -->
+        <form id="formRegister" style="display: none;">
+          <h2>Cadastre-se</h2>
+          
+          <div class="input-group">
+            <label class="avatar-label">Escolha seu Avatar (Role para ver mais)</label>
+            <!-- Grade com rolagem interna para acomodar quantos avatares quiser -->
+            <div class="avatar-scroll-container">
+              <div class="avatar-grid" id="registerAvatarGrid">
+                <img src="/img/avatar1.png" class="avatar-option selected" data-src="/img/avatar1.png">
+                <img src="/img/avatar2.png" class="avatar-option" data-src="/img/avatar2.png">
+                <img src="/img/avatar3.png" class="avatar-option" data-src="/img/avatar3.png">
+                <img src="/img/avatar4.png" class="avatar-option" data-src="/img/avatar4.png">
+                <img src="/img/avatar5.png" class="avatar-option" data-src="/img/avatar5.png">
+                <!-- Adicione mais tags <img src="/img/avatarX.png" ...> aqui conforme criar novos avatares na pasta img -->
+              </div>
+            </div>
+            <input type="hidden" id="regAvatar" value="/img/avatar1.png">
+          </div>
+
+          <div class="input-group">
+            <input type="text" id="regWallet" required readonly placeholder="Carteira detectada automaticamente" style="background: #222; color: #aaa; cursor: not-allowed;">
+          </div>
+          <div class="input-group">
+            <input type="text" id="regNome" required placeholder="Nome Completo">
+          </div>
+          <div class="input-group">
+            <input type="text" id="regUsername" required placeholder="Username">
+          </div>
+          <div class="input-group">
+            <input type="email" id="regEmail" required placeholder="E-mail">
+          </div>
+          <div class="input-group">
+            <input type="password" id="regSenha" required placeholder="Senha">
+          </div>
+          
+          <button type="submit" class="btn-primary">Finalizar Cadastro</button>
+          
+          <div class="form-footer">
+            <p>Já possui cadastro? <a href="#" id="linkIrLogin">Entrar.</a></p>
+          </div>
+        </form>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="/login/js/login.js"></script>
+</body>
+</html>

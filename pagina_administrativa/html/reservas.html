@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerenciamento de Reservas - Biblioteca</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/css/reservas.css">
+</head>
+<body>
+
+  <!-- Menu Lateral -->
+  <div class="sidebar">
+  <h2>Admin Biblioteca</h2>
+  <a href="/" class="nav-btn">🏠 Página inicial</a>
+  <!-- Aponta de volta para o arquivo admin.html -->
+  <a href="livros.html" class="nav-btn">➕ Adicionar Livro</a>
+  <a href="reservas.html" class="nav-btn active">📋 Aceitar Reservas</a>
+  <label class="theme-toggle">
+    <input type="checkbox" id="toggleDark">
+    <span>Modo Escuro</span>
+  </label>
+</div>
+
+  <!-- Conteúdo Principal -->
+  <div class="content">
+    <h1>Reservas de Livros</h1>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>#ID</th>
+            <th>Aluno</th>
+            <th>Livro</th>
+            <th>Data Solicitada</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-reservas">
+          <!-- O JavaScript irá inserir as linhas de reservas aqui -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="/admin/java/reservas.js"></script>
+</body>
+</html>
