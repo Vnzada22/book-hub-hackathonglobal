@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BookHub — Gerenciamento de Reservas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Caminho corrigido para a pasta de CSS correta do admin -->
+    <link rel="stylesheet" href="../css/reservas.css">
+  </head>
+  <body>
+    
+    <!-- HEADER ESTILO NETFLIX -->
+    <header class="netflix-header">
+      <div class="nav-left">
+        <!-- Logo corrigido com estilo inline para evitar o formato de link padrão (azul/pequeno) -->
+        <a href="/" style="text-decoration: none; display: inline-flex; align-items: center;">
+          <h1 class="netflix-logo" style="font-size: 24px; font-weight: 700; color: #e50914; margin: 0; text-decoration: none;">BOOKHUB</h1>
+        </a>
+        <nav class="nav-links">
+          <a href="/admin/livros.html">Gerenciar Livros</a>
+          <a href="#" class="active">Reservas</a>
+        </nav>
+      </div>
+      <div class="nav-right">
+        <button id="homeBtn" class="btn-admin" onclick="window.location.href='/'">Ir para o Site</button>
+      </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="netflix-main">
+      <h2 class="row-title">Solicitações de Pré-Reserva</h2>
+      
+      <div class="table-container">
+        <table id="tabelaReservas">
+          <thead>
+            <tr>
+              <th>Livro</th>
+              <th>Aluno(a)</th>
+              <th>Data Solicitada</th>
+              <th>Status</th>
+              <th>Motivo / Observação</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Preenchido via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+    <!-- Caminho corrigido para a pasta de Java correta do admin -->
+    <script src="../java/reservas.js"></script>
+  </body>
+</html>

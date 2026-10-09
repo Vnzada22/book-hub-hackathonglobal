@@ -1,0 +1,142 @@
+:root {
+  --net-bg: #141414;
+  --net-surface: #1f1f1f;
+  --net-red: #E50914;
+  --net-red-hover: #b20710;
+  --net-text: #ffffff;
+  --net-gray: #808080;
+  --net-gray-light: #b3b3b3;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--net-bg);
+  color: var(--net-text);
+  overflow-x: hidden;
+}
+
+/* HEADER ESTILO NETFLIX */
+.netflix-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 68px;
+  background: rgba(20, 20, 20, 0.95);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4%;
+  z-index: 1000;
+}
+
+.nav-left { display: flex; align-items: center; gap: 40px; }
+.netflix-logo {
+  color: var(--net-red);
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.nav-links { display: flex; gap: 20px; }
+.nav-links a {
+  text-decoration: none;
+  color: var(--net-gray-light);
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--net-text);
+  font-weight: 700;
+}
+
+.nav-right { display: flex; align-items: center; gap: 15px; }
+
+.btn-admin {
+  background-color: var(--net-red);
+  color: var(--net-text);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-admin:hover { background-color: var(--net-red-hover); }
+
+/* CORPO DA PÁGINA */
+.netflix-main {
+  padding: 100px 4% 50px 4%; /* Compensa o header fixo */
+}
+
+.row-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* TABELA ESTILIZADA */
+.table-container {
+  background-color: var(--net-surface);
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 14px;
+}
+
+th {
+  color: var(--net-gray-light);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+td {
+  color: var(--net-text);
+}
+
+/* BOTÕES DE AÇÃO */
+.btn-aprovar {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: opacity 0.2s;
+}
+.btn-aprovar:hover { opacity: 0.8; }
+
+.btn-rejeitar {
+  background-color: var(--net-red);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-rejeitar:hover { background-color: var(--net-red-hover); }

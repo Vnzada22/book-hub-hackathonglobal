@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin — BookHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/admin/css/livros.css">
+</head>
+<body>
+  <header class="netflix-header">
+    <a href="/" style="text-decoration: none;">
+      <h1 class="netflix-logo" style="cursor: pointer; color: var(--net-red, #e50914); margin: 0;">BOOKHUB</h1>
+    </a>
+    <a href="/" class="btn-voltar">⬅ Voltar à Vitrine</a>
+  </header>
+
+  <main class="admin-container">
+    <section class="admin-card">
+      <h2>Cadastrar / Editar Livro</h2>
+      <form id="formLivro">
+        <input type="hidden" id="livroId">
+
+        <div class="input-group">
+          <label for="titulo">Título do Livro *</label>
+          <div class="ia-group">
+            <input type="text" id="titulo" required placeholder="Ex: O Pequeno Príncipe">
+            <button type="button" id="btnIA" class="btn-ia">✨ Autocompletar IA</button>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="input-group">
+            <label for="autor">Autor *</label>
+            <input type="text" id="autor" required placeholder="Nome do autor">
+          </div>
+          <div class="input-group">
+            <label for="editora">Editora *</label>
+            <input type="text" id="editora" required placeholder="Nome da editora">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="url_capa">URL da Capa</label>
+          <input type="url" id="url_capa" placeholder="https://...">
+        </div>
+
+        <div class="form-grid-3">
+          <div class="input-group">
+            <label for="ano_publicacao">Ano</label>
+            <input type="number" id="ano_publicacao" placeholder="2026">
+          </div>
+          <div class="input-group">
+            <label for="genero">Gênero</label>
+            <input type="text" id="genero" placeholder="Ex: Ficção">
+          </div>
+          <div class="input-group">
+            <label for="numero_paginas">Páginas</label>
+            <input type="number" id="numero_paginas" placeholder="150">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="idioma">Idioma</label>
+          <input type="text" id="idioma" value="Português">
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-salvar">Salvar Livro no Banco</button>
+          <button type="button" id="btnCancelar" class="btn-cancelar">Limpar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="admin-card" style="margin-top: 30px;">
+      <h2>Livros Cadastrados no Supabase</h2>
+      <div class="table-responsive">
+        <table id="tabelaLivros">
+          <thead>
+            <tr>
+              <th>Capa</th>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Gênero</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Preenchido via JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/admin/java/livros.js"></script>
+</body>
+</html>
