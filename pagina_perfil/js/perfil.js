@@ -52,7 +52,7 @@ function configurarEdicaoPerfil() {
   const modalEdicao = document.getElementById('modalEdicao');
   const formEditarPerfil = document.getElementById('formEditarPerfil');
   const editAvatarInput = document.getElementById('editAvatarInput');
-  const avatarOptions = document.querySelectorAll('.avatar-option');
+  const avatarOptions = document.querySelectorAll('.avatar-option-modal');
 
   // Lógica de seleção visual do avatar
   avatarOptions.forEach(img => {

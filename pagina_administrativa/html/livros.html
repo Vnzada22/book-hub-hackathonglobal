@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Painel Admin — BookHub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Literata:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/admin/css/livros.css">
+  <link rel="stylesheet" href="/css/theme-polish.css">
 </head>
 <body>
   <header class="netflix-header">
@@ -25,7 +28,16 @@
           <label for="titulo">Título do Livro *</label>
           <div class="ia-group">
             <input type="text" id="titulo" required placeholder="Ex: O Pequeno Príncipe">
-            <button type="button" id="btnIA" class="btn-ia">✨ Autocompletar IA</button>
+            <button type="button" id="btnIA" class="btn-ia">🔎 Buscar dados verificados</button>
+            <button type="button" id="btnIAVarios" class="btn-ia btn-ia-multiplo">🔎 Buscar vários livros</button>
+          </div>
+        </div>
+
+        <div id="multiIABox" class="multi-ia-box" style="display: none;">
+          <label for="listaTitulosIA">Adicionar vários livros dos catálogos</label>
+          <textarea id="listaTitulosIA" rows="4" placeholder="Ex: O Pequeno Príncipe, Dom Quixote, O Alquimista"></textarea>
+          <div class="multi-ia-actions">
+            <button type="button" id="btnProcessarMultiplos" class="btn-salvar btn-multi-processar">Buscar e adicionar livros</button>
           </div>
         </div>
 
@@ -43,6 +55,11 @@
         <div class="input-group">
           <label for="url_capa">URL da Capa</label>
           <input type="url" id="url_capa" placeholder="https://...">
+        </div>
+
+        <div class="input-group">
+          <label for="resumo">Resumo do Livro *</label>
+          <textarea id="resumo" rows="5" required placeholder="Escreva uma apresentação breve do livro. A IA tentará preencher este campo automaticamente."></textarea>
         </div>
 
         <div class="form-grid-3">

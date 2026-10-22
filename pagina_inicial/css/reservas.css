@@ -1,3 +1,4 @@
+
 :root {
   --net-bg: #141414;
   --net-surface: #1f1f1f;
@@ -11,10 +12,14 @@
 * { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
   background-color: var(--net-bg);
   color: var(--net-text);
   overflow-x: hidden;
+}
+
+button, a, input, select, textarea {
+  font-family: 'Roboto', 'Segoe UI', Arial, sans-serif;
 }
 
 /* HEADER ESTILO NETFLIX */
@@ -57,21 +62,28 @@ body {
 .nav-right { display: flex; align-items: center; gap: 15px; }
 
 .btn-admin {
-  background-color: var(--net-red);
+  background: linear-gradient(135deg, #e50914 0%, #ff3b3f 100%);
   color: var(--net-text);
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 18px;
+  border-radius: 999px;
   font-weight: 700;
   font-size: 13px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  box-shadow: 0 8px 18px rgba(229, 9, 20, 0.25);
+  letter-spacing: 0.02em;
 }
-.btn-admin:hover { background-color: var(--net-red-hover); }
+.btn-admin:hover {
+  background: linear-gradient(135deg, #ff3b3f 0%, #d10013 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(229, 9, 20, 0.35);
+  filter: brightness(1.05);
+}
 
-/* CORPO DA PÁGINA */
+/* CORPO DA P?GINA */
 .netflix-main {
-  padding: 100px 4% 50px 4%; /* Compensa o header fixo */
+  padding: 100px 4% 50px 4%;
 }
 
 .row-title {
@@ -83,7 +95,7 @@ body {
 /* TABELA ESTILIZADA */
 .table-container {
   background-color: var(--net-surface);
-  border-radius: 6px;
+  border-radius: 12px;
   padding: 20px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.5);
   overflow-x: auto;
@@ -113,30 +125,39 @@ td {
   color: var(--net-text);
 }
 
-/* BOTÕES DE AÇÃO */
+/* BOT?ES DE A??O */
 .btn-aprovar {
-  background-color: #10b981;
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 9px 16px;
+  border-radius: 999px;
   font-weight: 700;
   font-size: 12px;
   cursor: pointer;
   margin-right: 6px;
-  transition: opacity 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 18px rgba(16, 185, 129, 0.25);
 }
-.btn-aprovar:hover { opacity: 0.8; }
+.btn-aprovar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(16, 185, 129, 0.35);
+}
 
 .btn-rejeitar {
-  background-color: var(--net-red);
+  background: linear-gradient(135deg, #e50914 0%, #ff3b3f 100%);
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 9px 16px;
+  border-radius: 999px;
   font-weight: 700;
   font-size: 12px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 18px rgba(229, 9, 20, 0.25);
 }
-.btn-rejeitar:hover { background-color: var(--net-red-hover); }
+.btn-rejeitar:hover {
+  background: linear-gradient(135deg, #ff3b3f 0%, #d10013 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(229, 9, 20, 0.35);
+}

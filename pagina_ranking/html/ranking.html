@@ -1,0 +1,54 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BookHub — Ranking de Leitores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Literata:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/ranking/css/ranking.css">
+  <link rel="stylesheet" href="/css/theme-polish.css">
+</head>
+<body>
+  <canvas id="interactiveCanvas"></canvas>
+
+  <header class="netflix-header">
+    <div class="header-left">
+      <a href="/" class="netflix-logo">BOOKHUB</a>
+      <nav class="netflix-nav">
+        <a href="/ranking/html/ranking.html" class="ativo">Ranking de Leitores</a>
+      </nav>
+    </div>
+    <div class="header-right">
+      <a href="/" class="btn-voltar-vitrine">Voltar à Vitrine</a>
+    </div>
+  </header>
+
+  <main class="ranking-container">
+    <div class="ranking-header-title">
+      <h1>🏆 Hall da Fama — Maiores Leitores</h1>
+      <p>Os leitores que mais se destacaram nas reservas e exploração de obras no BookHub.</p>
+    </div>
+
+    <div class="podium-section" id="podiumSection"></div>
+
+    <div class="ranking-table-card">
+      <h3>Classificação Geral</h3>
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th style="width: 80px;">Posição</th>
+            <th>Leitor / Usuário</th>
+            <th>Livros Reservados / Lidos</th>
+            <th>Nível / Condecoração</th>
+          </tr>
+        </thead>
+        <tbody id="rankingTableBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="/ranking/js/ranking.js"></script>
+</body>
+</html>

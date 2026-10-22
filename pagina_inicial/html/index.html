@@ -6,8 +6,9 @@
     <title>BookHub — Catálogo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;700&family=Roboto:wght@300;400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Literata:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/theme-polish.css">
   </head>
   <body>
     <header class="netflix-header">
@@ -16,20 +17,17 @@
           <h1 class="netflix-logo" style="cursor: pointer; color: var(--net-red, #e50914); margin: 0;">BOOKHUB</h1>
         </a>
         <nav class="nav-links">
-          <a href="#" class="active">Início</a>
-          <a href="#">Séries</a>
-          <a href="#">Filmes (Livros)</a>
-          <a href="#">Minha Lista</a>
+          <a href="#" class="nav-pill active">Início</a>
+          <a href="#" class="nav-pill">Livros</a>
+          <a href="#" class="nav-pill">Minha Lista</a>
+          <a href="/ranking/html/ranking.html" class="nav-pill ranking-link">Ranking</a>
         </nav>
       </div>
-      
+
       <div class="nav-right">
         <input id="search" placeholder="Títulos, autores, gêneros..." aria-label="Pesquisar livros">
-        
-        <!-- Botão de login genérico (mostra se não estiver logado) -->
         <button id="btnLoginFallback" class="btn-admin" onclick="window.location.href='/login/login.html'">Entrar</button>
 
-        <!-- Dropdown de Perfil Estilo Netflix (mostra se estiver logado) -->
         <div class="profile-menu" id="profileMenu" style="display: none;">
           <div class="profile-avatar">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Avatar">
@@ -60,14 +58,12 @@
     </section>
 
     <section class="categories-section">
-      <div id="filterChips" class="categories-flex"></div>
+      <p class="category-filter-label">Filtrar por categoria</p>
+      <div id="filterChips" class="categories-flex" role="group" aria-label="Filtrar livros por categoria"></div>
     </section>
 
     <main class="netflix-main">
-      <!-- Container das Fileiras Horizontais (Início Padrão) -->
       <div id="mainContentRows"></div>
-
-      <!-- Container de Busca/Filtro (Aparece apenas quando o usuário pesquisa) -->
       <div id="searchResults" class="books-grid" style="display: none;"></div>
     </main>
 

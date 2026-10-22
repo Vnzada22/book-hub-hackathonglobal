@@ -8,6 +8,128 @@ const STORAGE_KEY = 'bookhub_wallet_user';
 let books = [];
 let minhaListaLivros = [];
 let categoriaAtiva = 'todos';
+let activeBookFocus = null;
+let bookFocusCloseTimer = null;
+
+function posicionarResumoEmFoco(card, resumo) {
+  const margem = 16;
+  const intervalo = 18;
+  const larguraTela = window.innerWidth;
+  const alturaTela = window.innerHeight;
+  const compacto = larguraTela < 760;
+  const larguraPainel = Math.min(compacto ? 420 : 360, larguraTela - margem * 2);
+  const cardRect = card.getBoundingClientRect();
+
+  resumo.classList.toggle('book-summary-floating--stacked', compacto);
+  resumo.style.width = `${larguraPainel}px`;
+  resumo.style.visibility = 'hidden';
+
+  const alturaPainel = resumo.offsetHeight;
+  let left;
+  let top;
+
+  if (compacto) {
+    left = cardRect.left + (cardRect.width - larguraPainel) / 2;
+    left = Math.max(margem, Math.min(left, larguraTela - larguraPainel - margem));
+    top = cardRect.bottom + intervalo;
+    if (top + alturaPainel > alturaTela - margem) {
+      top = Math.max(margem, cardRect.top - alturaPainel - intervalo);
+    }
+  } else {
+    const espacoDireita = larguraTela - cardRect.right - intervalo - margem;
+    const espacoEsquerda = cardRect.left - intervalo - margem;
+
+    if (espacoDireita >= Math.min(larguraPainel, 300)) {
+      left = cardRect.right + intervalo;
+    } else if (espacoEsquerda >= larguraPainel) {
+      left = cardRect.left - larguraPainel - intervalo;
+    } else if (espacoDireita >= espacoEsquerda) {
+      left = cardRect.right + intervalo;
+    } else {
+      left = cardRect.left - larguraPainel - intervalo;
+    }
+
+    left = Math.max(margem, Math.min(left, larguraTela - larguraPainel - margem));
+    top = Math.max(margem, Math.min(cardRect.top, alturaTela - alturaPainel - margem));
+  }
+
+  resumo.style.left = `${left}px`;
+  resumo.style.top = `${top}px`;
+  resumo.style.visibility = '';
+}
+
+function fecharResumoEmFoco() {
+  if (bookFocusCloseTimer) {
+    clearTimeout(bookFocusCloseTimer);
+    bookFocusCloseTimer = null;
+  }
+  if (!activeBookFocus) return;
+
+  const foco = activeBookFocus;
+  activeBookFocus = null;
+  window.removeEventListener('resize', foco.reposicionar);
+  window.removeEventListener('scroll', foco.reposicionar, true);
+  foco.card.classList.remove('is-book-focused');
+  document.body.classList.remove('book-focus-active');
+  foco.backdrop.remove();
+  foco.resumo.classList.remove('book-summary-floating', 'book-summary-floating--stacked');
+  foco.resumo.style.removeProperty('width');
+  foco.resumo.style.removeProperty('left');
+  foco.resumo.style.removeProperty('top');
+  foco.resumo.style.removeProperty('visibility');
+  foco.parent.insertBefore(foco.resumo, foco.proximoIrmao && foco.proximoIrmao.parentNode === foco.parent ? foco.proximoIrmao : null);
+}
+
+function abrirResumoEmFoco(card, resumo) {
+  if (activeBookFocus && activeBookFocus.card === card) {
+    posicionarResumoEmFoco(card, resumo);
+    return;
+  }
+  fecharResumoEmFoco();
+
+  const parent = resumo.parentNode;
+  const proximoIrmao = resumo.nextSibling;
+  const backdrop = document.createElement('div');
+  backdrop.className = 'book-focus-backdrop';
+  backdrop.setAttribute('aria-hidden', 'true');
+  backdrop.addEventListener('click', fecharResumoEmFoco);
+
+  const foco = {
+    card,
+    resumo,
+    parent,
+    proximoIrmao,
+    backdrop,
+    reposicionar: () => posicionarResumoEmFoco(card, resumo)
+  };
+  activeBookFocus = foco;
+
+  document.body.classList.add('book-focus-active');
+  document.body.appendChild(backdrop);
+  card.classList.add('is-book-focused');
+  resumo.classList.add('book-summary-floating');
+  document.body.appendChild(resumo);
+  foco.reposicionar();
+
+  resumo.addEventListener('pointerenter', cancelarFechamentoResumo);
+  window.addEventListener('resize', foco.reposicionar);
+  window.addEventListener('scroll', foco.reposicionar, true);
+}
+
+function cancelarFechamentoResumo() {
+  if (!bookFocusCloseTimer) return;
+  clearTimeout(bookFocusCloseTimer);
+  bookFocusCloseTimer = null;
+}
+
+function agendarFechamentoResumo() {
+  cancelarFechamentoResumo();
+  bookFocusCloseTimer = setTimeout(fecharResumoEmFoco, 450);
+}
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && activeBookFocus) fecharResumoEmFoco();
+});
 
 function getCurrentUser() {
   try {
@@ -103,6 +225,7 @@ function carregarMinhaListaLocal() {
 function criarCartaoLivro(b) {
   const card = document.createElement('article');
   card.className = 'book-card';
+  card.tabIndex = 0;
 
   const idsLista = getMinhaListaIds();
   const isLiked = idsLista.includes(b.id);
@@ -113,7 +236,7 @@ function criarCartaoLivro(b) {
     ? `<img src="${b.url_capa}" alt="${b.titulo}" onerror="this.outerHTML='<span style=\'font-size:14px; font-weight:bold; color:#fff;\'>${primeiraPalavra}</span>'">`
     : `<span style="font-size:14px; font-weight:bold; color:#fff;">${primeiraPalavra}</span>`;
 
-  const generoTexto = b.genero ? b.genero : 'Geral';
+  const generoTexto = obterGeneroLivro(b);
   const disponivel = b.disponivel !== false;
   const statusBadge = disponivel
     ? '<span class="badge-disponivel">Disponível</span>'
@@ -138,6 +261,44 @@ function criarCartaoLivro(b) {
       ${botaoReserva}
     </div>
   `;
+
+  const resumo = document.createElement('div');
+  resumo.className = 'book-summary';
+  resumo.setAttribute('role', 'note');
+  resumo.setAttribute('aria-label', `Resumo de ${b.titulo || 'livro'}`);
+
+  const tituloResumo = document.createElement('span');
+  tituloResumo.className = 'book-summary-heading';
+  tituloResumo.textContent = 'Sobre este livro';
+
+  const textoResumo = document.createElement('p');
+  textoResumo.className = 'book-summary-text';
+  textoResumo.textContent = String(b.resumo || b.descricao || '').trim() || 'Resumo ainda não disponível.';
+
+  resumo.append(tituloResumo, textoResumo);
+  card.querySelector('.book-details').appendChild(resumo);
+
+  card.addEventListener('pointerenter', event => {
+    if (event.pointerType === 'mouse' || event.pointerType === 'pen') {
+      cancelarFechamentoResumo();
+      abrirResumoEmFoco(card, resumo);
+    }
+  });
+  card.addEventListener('pointerleave', event => {
+    if (!resumo.contains(event.relatedTarget)) agendarFechamentoResumo();
+  });
+  card.addEventListener('focusin', () => {
+    cancelarFechamentoResumo();
+    abrirResumoEmFoco(card, resumo);
+  });
+  card.addEventListener('focusout', event => {
+    if (!card.contains(event.relatedTarget)) agendarFechamentoResumo();
+  });
+  card.addEventListener('click', event => {
+    if (event.target.closest('button, a') || !window.matchMedia('(hover: none)').matches) return;
+    if (!activeBookFocus || activeBookFocus.card !== card) abrirResumoEmFoco(card, resumo);
+  });
+  resumo.addEventListener('pointerleave', agendarFechamentoResumo);
   return card;
 }
 
@@ -181,7 +342,18 @@ function criarCarrossel(titulo, listaLivros) {
   rowDiv.appendChild(rowTitle);
   rowDiv.appendChild(rowContainer);
 
+  requestAnimationFrame(() => {
+    const temMaisConteudo = rowSliders.scrollWidth > rowSliders.clientWidth + 1;
+    btnPrev.hidden = !temMaisConteudo;
+    btnNext.hidden = !temMaisConteudo;
+  });
+
   return rowDiv;
+}
+
+function obterGeneroLivro(livro) {
+  const genero = typeof livro.genero === 'string' ? livro.genero.trim() : '';
+  return genero || 'Geral';
 }
 
 function renderRowsInterface() {
@@ -202,13 +374,32 @@ function renderRowsInterface() {
   const recentes = [...books].slice(0, 15);
   mainContentRows.appendChild(criarCarrossel('Descubra suas próximas histórias', recentes));
 
-  const generos = [...new Set(books.map(b => b.genero).filter(Boolean))];
+  const generos = [...new Map(books.map(livro => {
+    const genero = obterGeneroLivro(livro);
+    return [genero.toLocaleLowerCase('pt-BR'), genero];
+  })).values()];
+
   generos.forEach(genero => {
-    const livrosDaCategoria = books.filter(b => b.genero === genero);
-    if (livrosDaCategoria.length >= 2) {
-      mainContentRows.appendChild(criarCarrossel(`Nostalgia ${genero}`, livrosDaCategoria));
-    }
+    const livrosDaCategoria = books.filter(livro => obterGeneroLivro(livro).toLocaleLowerCase('pt-BR') === genero.toLocaleLowerCase('pt-BR'));
+    if (livrosDaCategoria.length > 0) mainContentRows.appendChild(criarCarrossel(genero, livrosDaCategoria));
   });
+}
+
+function renderCategoryInterface(lista, genero) {
+  if (!mainContentRows) return;
+  mainContentRows.innerHTML = '';
+  mainContentRows.style.display = 'block';
+  if (searchResultsGrid) searchResultsGrid.style.display = 'none';
+
+  if (lista.length === 0) {
+    const mensagem = document.createElement('p');
+    mensagem.className = 'catalog-empty-state';
+    mensagem.textContent = `Nenhum livro encontrado em ${genero}.`;
+    mainContentRows.appendChild(mensagem);
+    return;
+  }
+
+  mainContentRows.appendChild(criarCarrossel(genero, lista));
 }
 
 function renderGridInterface(lista) {
@@ -254,19 +445,29 @@ async function fazerPreReserva(idLivro, tituloLivro) {
 }
 
 function atualizarFiltrosCategorias(listaLivros) {
-  const generos = ['todos', ...new Set(listaLivros.map(b => b.genero).filter(Boolean))];
+  const generosUnicos = [...new Map(listaLivros.map(livro => {
+    const genero = obterGeneroLivro(livro);
+    return [genero.toLocaleLowerCase('pt-BR'), genero];
+  })).values()];
+  const generos = ['todos', ...generosUnicos];
 
   if (!filterChipsContainer) return;
   filterChipsContainer.innerHTML = '';
 
   generos.forEach(genero => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `chip ${genero === categoriaAtiva ? 'active' : ''}`;
     btn.textContent = genero.charAt(0).toUpperCase() + genero.slice(1);
+    btn.setAttribute('aria-pressed', String(genero === categoriaAtiva));
 
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      filterChipsContainer.querySelectorAll('.chip').forEach(c => {
+        c.classList.remove('active');
+        c.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
       categoriaAtiva = genero;
       aplicarFiltros();
     });
@@ -284,7 +485,7 @@ function aplicarFiltros() {
   }
 
   const livrosFiltrados = books.filter(b => {
-    const matchCategoria = categoriaAtiva === 'todos' || (b.genero && b.genero.toLowerCase() === categoriaAtiva.toLowerCase());
+    const matchCategoria = categoriaAtiva === 'todos' || obterGeneroLivro(b).toLowerCase() === categoriaAtiva.toLowerCase();
     const matchBusca = !termoBusca ||
       b.titulo.toLowerCase().includes(termoBusca) ||
       b.autor.toLowerCase().includes(termoBusca) ||
@@ -292,6 +493,11 @@ function aplicarFiltros() {
 
     return matchCategoria && matchBusca;
   });
+
+  if (!termoBusca && categoriaAtiva !== 'todos') {
+    renderCategoryInterface(livrosFiltrados, categoriaAtiva);
+    return;
+  }
 
   renderGridInterface(livrosFiltrados);
 }
