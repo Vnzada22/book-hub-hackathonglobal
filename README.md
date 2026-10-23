@@ -79,8 +79,36 @@ O administrador pode:
 - promover usuários para administração;
 - manter uma visão mais ampla do funcionamento da biblioteca.
 
+Na busca de vários livros, o servidor consulta Google Books, Open Library, Wikipedia/Wikidata e Internet Archive, tenta títulos alternativos conhecidos/traduzidos e combina os campos encontrados entre as fontes. Resumos são apresentados em português do Brasil; se a descrição encontrada for apenas o título ou não puder ser traduzida com segurança, o campo fica vazio para revisão manual. Nomes de autores com escrita não latina e valores de editora que parecem ser notas de tradução são descartados para evitar atribuições falsas; podem ser preenchidos manualmente na ficha. A ficha apresenta as fontes consultadas e links quando disponíveis. Os resultados aparecem como fichas editáveis e **não são salvos até o administrador confirmar cada livro**. Dados que não foram encontrados ficam em branco para revisão manual, sem serem inventados.
+
 ### 5. Sessão e autenticação
 O projeto já implementa uma lógica de sessão para manter o usuário logado na aplicação e controlar o acesso às áreas restritas, como o painel administrativo.
+
+O login também oferece código de verificação por e-mail, Google OAuth, X OAuth 2.0 com PKCE e assinatura de carteira MetaMask. Para ativar esses serviços, configure no `.env` as variáveis correspondentes do `.env.example`:
+
+- `RESEND_API_KEY`, `AUTH_EMAIL_FROM` e um `AUTH_TOKEN_SECRET` aleatório e longo para envio/validação segura dos códigos por e-mail (Resend);
+- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` e, em produção, `AUTH_BASE_URL` para Google OAuth;
+- `X_CLIENT_ID`, `X_CLIENT_SECRET` e, em produção, `AUTH_BASE_URL` para X OAuth.
+
+Cadastre os endereços de callback na configuração de cada provedor: `/api/auth/google/callback` e `/api/auth/x/callback`. O endereço público configurado em `AUTH_BASE_URL` precisa corresponder ao domínio do site. As tabelas de verificação e de associação das contas OAuth são criadas pelo servidor no banco PostgreSQL durante a inicialização.
+
+Ao entrar pelo X, o usuário também informa um e-mail e confirma um código de 6 dígitos enviado para esse endereço antes de acessar a conta ou concluir o cadastro. A associação da identidade X só é gravada após essa confirmação. A tabela auxiliar desse fluxo também está definida em `supabase/migrations/20261023001000_require_verified_email_for_x.sql`.
+
+Os métodos confirmados são registrados em `public.auth_identities`, associados ao usuário e identificados por `method` (`email`, `google`, `x` ou `metamask`) e `provider_user_id`. A tabela mantém os horários da verificação e do último login. A inicialização copia para ela os e-mails, contas OAuth e carteiras já existentes sem remover as colunas/tabelas legadas.
+
+Depois de uma autenticação verificada, o servidor também mantém uma sessão opaca em cookie `HttpOnly` (`public.auth_sessions`). As operações de reserva e de perfil usam essa sessão em vez de confiar no identificador enviado pelo navegador.
+
+### Ranking por temporadas e comprovação futura
+
+O ranking usa temporadas mensais e mantém as pontuações fora da blockchain, no PostgreSQL/Supabase. A primeira temporada começa sem importar os saldos antigos de `ranking_leitores`; esses dados legados não são apagados, mas não contam para a nova classificação. No momento, cada livro diferente reservado pelo mesmo usuário vale **1 ponto por temporada**. Novas tentativas do mesmo livro não geram pontos repetidos. Resumos ainda não pontuam: quando a funcionalidade de resenhas for criada, a regra prevista é **3 pontos por resumo aprovado**, com um evento único por resumo.
+
+Reservas e eventos de pontuação ficam persistidos em `bookhub_reservations` e `ranking_point_events`. Ao encerrar o mês, os resultados são congelados em `ranking_season_results`; as posições Top 1, Top 2 e Top 3 ficam visíveis no perfil como tags históricas. A tela de ranking permite consultar a temporada atual e as anteriores.
+
+No fechamento de cada temporada, o servidor calcula um resumo SHA-256 em estrutura Merkle dos resultados e o guarda em `ranking_seasons.results_hash`. Esse digest permite preparar uma verificação futura, mas **ainda não é publicado on-chain**: não há RPC, contrato, transação nem NFT/SBT implementado. O hash usa identificadores internos e posições/pontos, não nomes, e-mail ou histórico pessoal. A publicação em rede só deve ser adicionada após definir rede, política de confirmação e tratamento de reorganizações.
+
+A migração `supabase/migrations/20261022231000_add_monthly_ranking_seasons.sql` cria as tabelas de sessão, temporada, eventos de pontos, resultados e reservas persistentes. O servidor também garante essas tabelas na inicialização. Revise e aplique a migração no projeto Supabase antes de implantar, especialmente em produção; faça backup do banco antes de qualquer alteração de esquema.
+
+A estrutura anterior `ranking_leitores.pontos_onchain` e `blockchain_ranking_events`, criada pela migração `supabase/migrations/20261022220000_add_auth_identities_and_blockchain_ranking.sql`, permanece como preparação separada e não altera o cálculo do ranking sazonal.
 
 ## 🛠️ Tecnologias e abordagem atual
 

@@ -6,7 +6,7 @@
     <title>BookHub — Catálogo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;700&family=Roboto:wght@300;400;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body>
@@ -16,26 +16,28 @@
           <h1 class="netflix-logo" style="cursor: pointer; color: var(--net-red, #e50914); margin: 0;">BOOKHUB</h1>
         </a>
         <nav class="nav-links">
-          <a href="#" class="active">Início</a>
-          <a href="#">Séries</a>
-          <a href="#">Filmes (Livros)</a>
-          <a href="#">Minha Lista</a>
+          <a href="#" class="nav-pill active">Início</a>
+          <a href="#" class="nav-pill">Minha Lista</a>
+          <a href="/ranking/html/ranking.html" class="nav-pill ranking-link">Ranking</a>
         </nav>
       </div>
-      
+
       <div class="nav-right">
-        <input id="search" placeholder="Títulos, autores, gêneros..." aria-label="Pesquisar livros">
-        
-        <!-- Botão de login genérico (mostra se não estiver logado) -->
+        <div class="search-container">
+          <input id="search" type="search" name="bookhub-catalog-search" autocomplete="off" spellcheck="false" placeholder="Títulos, autores, gêneros..." aria-label="Pesquisar livros" aria-controls="categoriesSection" aria-expanded="false">
+          <section id="categoriesSection" class="categories-section" hidden>
+            <p class="category-filter-label">Filtrar por categoria</p>
+            <div id="filterChips" class="categories-flex" role="group" aria-label="Filtrar livros por categoria"></div>
+          </section>
+        </div>
         <button id="btnLoginFallback" class="btn-admin" onclick="window.location.href='/login/login.html'">Entrar</button>
 
-        <!-- Dropdown de Perfil Estilo Netflix (mostra se estiver logado) -->
         <div class="profile-menu" id="profileMenu" style="display: none;">
-          <div class="profile-avatar">
+          <div class="profile-avatar" role="button" tabindex="0" aria-expanded="false" aria-controls="profileDropdown">
             <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Avatar">
             <span class="caret"></span>
           </div>
-          <div class="profile-dropdown">
+          <div class="profile-dropdown" id="profileDropdown">
             <div class="dropdown-header">
               <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Netflix-avatar.png" alt="Avatar">
               <span id="usuarioAtualNome">Usuário</span>
@@ -51,23 +53,23 @@
     </header>
 
     <section class="netflix-hero">
-      <div class="hero-vignette"></div>
       <div class="hero-info">
-        <span class="hero-badge">ORIGINAL BOOKHUB</span>
-        <h2>Explore Universos e Histórias</h2>
-        <p>Mergulhe em títulos épicos, conhecimentos avançados e jornadas lendárias. Escolha sua próxima leitura e comece agora.</p>
+        <span class="hero-badge">CONSULTE O ACERVO E RESERVE SEU LIVRO</span>
+        <h2>Encontre seu próximo<br><em>livro na biblioteca.</em></h2>
+        <p>Confira os títulos disponíveis na sua biblioteca, acompanhe a disponibilidade em tempo real e faça a pré-reserva do seu exemplar sem sair de casa.</p>
+        <a class="hero-cta" href="#mainContentRows">Ver livros disponíveis <span aria-hidden="true">↓</span></a>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="hero-art-grid"></div>
+        <div class="hero-book hero-book-back"><span>UMA VIDA<br>ENTRE LIVROS</span><i>BOOKHUB EDITIONS</i></div>
+        <div class="hero-book hero-book-middle"><span>O PRÓXIMO<br>CAPÍTULO</span><i>LEITURAS • 2026</i></div>
+        <div class="hero-book hero-book-front"><span>GARANTA<br>SUA<br>RESERVA</span><i>BOOKHUB</i></div>
+        <span class="hero-art-note">01 — ACERVO &amp; RESERVAS</span>
       </div>
     </section>
 
-    <section class="categories-section">
-      <div id="filterChips" class="categories-flex"></div>
-    </section>
-
     <main class="netflix-main">
-      <!-- Container das Fileiras Horizontais (Início Padrão) -->
-      <div id="mainContentRows"></div>
-
-      <!-- Container de Busca/Filtro (Aparece apenas quando o usuário pesquisa) -->
+      <div id="mainContentRows" aria-live="polite" aria-busy="true"></div>
       <div id="searchResults" class="books-grid" style="display: none;"></div>
     </main>
 

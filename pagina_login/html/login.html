@@ -1,84 +1,98 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#101012" />
   <title>BookHub — Entrar</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/login/css/login.css">
 </head>
 <body>
   <div class="netflix-login-bg">
     <div class="vignette-overlay"></div>
-    
     <header class="login-header">
       <a href="/" class="site-logo">BOOKHUB</a>
     </header>
 
     <main class="login-container">
-      <div class="login-box">
-        
-        <!-- TELA DE LOGIN / CONEXÃO METAMASK -->
-        <form id="formLogin" class="form-active">
-          <h2>Entrar</h2>
-          <p class="login-subtitle" style="color: #737373; margin-bottom: 20px; font-size: 14px;">Conecte sua carteira MetaMask para acessar a plataforma.</p>
-          
-          <button type="button" id="btnConectarMetaMask" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-            🦊 Conectar com MetaMask
-          </button>
-          
-          <div class="form-footer">
-            <p>Novo por aqui? <a href="#" id="linkIrCadastro">Cadastre-se aqui.</a></p>
+      <section class="login-box" aria-live="polite">
+        <div class="auth-mark" aria-hidden="true">📚</div>
+        <div id="authMessage" class="auth-message" role="status" hidden></div>
+
+        <form id="formLogin" class="auth-form">
+          <h1>Bem-vindo de volta</h1>
+          <p class="login-subtitle">Entre na sua conta BookHub</p>
+
+          <div class="social-login" aria-label="Outras formas de entrar">
+            <a class="social-button social-google" href="/api/auth/google" aria-label="Continuar com Google" title="Google">
+              <svg viewBox="0 0 48 48" role="img" aria-hidden="true">
+                <path fill="#4285F4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.8h11a9.4 9.4 0 0 1-4.1 6.2v5.1h6.6c3.9-3.6 6.1-8.8 6.1-15Z"/>
+                <path fill="#34A853" d="M24 44c5.5 0 10.1-1.8 13.5-4.8l-6.6-5.1c-1.8 1.2-4 1.9-6.9 1.9-5.3 0-9.8-3.6-11.4-8.4H5.8v5.3A20 20 0 0 0 24 44Z"/>
+                <path fill="#FBBC05" d="M12.6 27.6a12 12 0 0 1 0-7.2v-5.3H5.8a20 20 0 0 0 0 17.8l6.8-5.3Z"/>
+                <path fill="#EA4335" d="M24 12c3 0 5.7 1 7.8 3.1l5.8-5.8A19.3 19.3 0 0 0 24 4 20 20 0 0 0 5.8 15.1l6.8 5.3C14.2 15.6 18.7 12 24 12Z"/>
+              </svg>
+            </a>
+            <a class="social-button social-x" href="/api/auth/x" aria-label="Continuar com X" title="X">
+              <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+                <path d="M3 3h4.7l13.3 18h-4.7L3 3Zm0 18 7.6-8.8m2.8-3.3L21 3" />
+              </svg>
+            </a>
+            <button class="social-button social-metamask" id="btnConectarMetaMask" type="button" aria-label="Entrar com MetaMask" title="MetaMask">
+              <img src="/img/metamask-icon.png" alt="" aria-hidden="true">
+            </button>
           </div>
+          <div class="auth-divider"><span>ou continue com e-mail</span></div>
+
+          <label class="field-label" for="loginEmail">E-mail</label>
+          <input class="auth-input" type="email" id="loginEmail" autocomplete="email" placeholder="voce@exemplo.com" required>
+          <button type="submit" class="btn-primary">Continuar <span aria-hidden="true">→</span></button>
         </form>
 
-        <!-- FORMULÁRIO DE CADASTRO -->
-        <form id="formRegister" style="display: none;">
-          <h2>Cadastre-se</h2>
-          
+        <form id="formOtp" class="auth-form" hidden>
+          <h1>Verifique seu e-mail</h1>
+          <p class="login-subtitle">Enviamos um código de 6 dígitos para <strong id="otpEmailLabel"></strong></p>
+          <label class="field-label" for="otpCode">Código de verificação</label>
+          <input class="auth-input otp-input" id="otpCode" type="text" inputmode="numeric" autocomplete="one-time-code"
+            pattern="[0-9]{6}" maxlength="6" placeholder="000000" aria-label="Código de 6 dígitos" required>
+          <button type="submit" class="btn-primary">Verificar e continuar <span aria-hidden="true">→</span></button>
+          <button type="button" class="btn-secondary" id="btnVoltarEmail">← Voltar</button>
+          <p class="resend-copy">Não recebeu o código? <button type="button" class="text-button" id="btnReenviarCodigo">Reenviar</button><span id="resendCountdown"></span></p>
+        </form>
+
+        <form id="formRegister" class="auth-form" hidden>
+          <h1>Crie sua conta</h1>
+          <p class="login-subtitle">Só mais alguns detalhes para começar a ler.</p>
+
           <div class="input-group">
-            <label class="avatar-label">Escolha seu Avatar (Role para ver mais)</label>
-            <!-- Grade com rolagem interna para acomodar quantos avatares quiser -->
+            <label class="field-label avatar-label" for="registerAvatarGrid">Escolha seu avatar</label>
             <div class="avatar-scroll-container">
               <div class="avatar-grid" id="registerAvatarGrid">
-                <img src="/img/avatar1.png" class="avatar-option selected" data-src="/img/avatar1.png">
-                <img src="/img/avatar2.png" class="avatar-option" data-src="/img/avatar2.png">
-                <img src="/img/avatar3.png" class="avatar-option" data-src="/img/avatar3.png">
-                <img src="/img/avatar4.png" class="avatar-option" data-src="/img/avatar4.png">
-                <img src="/img/avatar5.png" class="avatar-option" data-src="/img/avatar5.png">
-                <!-- Adicione mais tags <img src="/img/avatarX.png" ...> aqui conforme criar novos avatares na pasta img -->
+                <img src="/img/avatar1.png" alt="Avatar 1" class="avatar-option selected" data-src="/img/avatar1.png">
+                <img src="/img/avatar2.png" alt="Avatar 2" class="avatar-option" data-src="/img/avatar2.png">
+                <img src="/img/avatar3.png" alt="Avatar 3" class="avatar-option" data-src="/img/avatar3.png">
+                <img src="/img/avatar4.png" alt="Avatar 4" class="avatar-option" data-src="/img/avatar4.png">
+                <img src="/img/avatar5.png" alt="Avatar 5" class="avatar-option" data-src="/img/avatar5.png">
               </div>
             </div>
             <input type="hidden" id="regAvatar" value="/img/avatar1.png">
           </div>
 
-          <div class="input-group">
-            <input type="text" id="regWallet" required readonly placeholder="Carteira detectada automaticamente" style="background: #222; color: #aaa; cursor: not-allowed;">
-          </div>
-          <div class="input-group">
-            <input type="text" id="regNome" required placeholder="Nome Completo">
-          </div>
-          <div class="input-group">
-            <input type="text" id="regUsername" required placeholder="Username">
-          </div>
-          <div class="input-group">
-            <input type="email" id="regEmail" required placeholder="E-mail">
-          </div>
-          <div class="input-group">
-            <input type="password" id="regSenha" required placeholder="Senha">
-          </div>
-          
-          <button type="submit" class="btn-primary">Finalizar Cadastro</button>
-          
-          <div class="form-footer">
-            <p>Já possui cadastro? <a href="#" id="linkIrLogin">Entrar.</a></p>
-          </div>
+          <label class="field-label" for="regNome">Nome</label>
+          <input class="auth-input" type="text" id="regNome" autocomplete="name" maxlength="100" placeholder="Seu nome" required>
+          <label class="field-label" for="regUsername">Nome de usuário</label>
+          <input class="auth-input" type="text" id="regUsername" autocomplete="username" maxlength="40" placeholder="Como podemos chamar você?" required>
+          <p class="verified-email">E-mail verificado: <strong id="registerEmailLabel"></strong></p>
+          <button type="submit" class="btn-primary">Finalizar cadastro <span aria-hidden="true">→</span></button>
+          <button type="button" class="btn-secondary" id="btnVoltarCodigo">← Voltar ao código</button>
         </form>
 
-      </div>
+        <p class="auth-help">Precisa de ajuda? <a href="mailto:suporte@bookhub.com">Fale com o suporte</a></p>
+      </section>
     </main>
   </div>
-
   <script src="/login/js/login.js"></script>
 </body>
 </html>

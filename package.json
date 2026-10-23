@@ -5,6 +5,8 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "ethers": "^6.17.0",
     "express": "^5.2.1",
     "pg": "^8.23.0"
   }
