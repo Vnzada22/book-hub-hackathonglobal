@@ -1,15 +1,16 @@
 ﻿const mainContentRows = document.getElementById('mainContentRows');
 const searchResultsGrid = document.getElementById('searchResults');
 const searchEl = document.getElementById('search');
+const categoriesSection = document.getElementById('categoriesSection');
 const connectBtn = document.getElementById('connect');
 const filterChipsContainer = document.getElementById('filterChips');
 const STORAGE_KEY = 'bookhub_wallet_user';
+const BOOKS_CACHE_KEY = 'bookhub_catalog_cache';
 
 let books = [];
 let minhaListaLivros = [];
 let categoriaAtiva = 'todos';
 let activeBookFocus = null;
-let bookFocusCloseTimer = null;
 
 function posicionarResumoEmFoco(card, resumo) {
   const margem = 16;
@@ -59,10 +60,6 @@ function posicionarResumoEmFoco(card, resumo) {
 }
 
 function fecharResumoEmFoco() {
-  if (bookFocusCloseTimer) {
-    clearTimeout(bookFocusCloseTimer);
-    bookFocusCloseTimer = null;
-  }
   if (!activeBookFocus) return;
 
   const foco = activeBookFocus;
@@ -111,20 +108,8 @@ function abrirResumoEmFoco(card, resumo) {
   document.body.appendChild(resumo);
   foco.reposicionar();
 
-  resumo.addEventListener('pointerenter', cancelarFechamentoResumo);
   window.addEventListener('resize', foco.reposicionar);
   window.addEventListener('scroll', foco.reposicionar, true);
-}
-
-function cancelarFechamentoResumo() {
-  if (!bookFocusCloseTimer) return;
-  clearTimeout(bookFocusCloseTimer);
-  bookFocusCloseTimer = null;
-}
-
-function agendarFechamentoResumo() {
-  cancelarFechamentoResumo();
-  bookFocusCloseTimer = setTimeout(fecharResumoEmFoco, 450);
 }
 
 document.addEventListener('keydown', event => {
@@ -143,9 +128,37 @@ function getCurrentUser() {
 
 function renderUserState() {
   const profileMenu = document.getElementById('profileMenu');
+  const profileTrigger = profileMenu?.querySelector('.profile-avatar');
   const btnLoginFallback = document.getElementById('btnLoginFallback');
   const usuarioAtualNome = document.getElementById('usuarioAtualNome');
   const user = getCurrentUser();
+
+  if (profileTrigger && !profileTrigger.dataset.menuReady) {
+    const toggleProfileMenu = () => {
+      const isOpen = profileMenu.classList.toggle('is-open');
+      profileTrigger.setAttribute('aria-expanded', String(isOpen));
+    };
+    profileTrigger.addEventListener('click', toggleProfileMenu);
+    profileTrigger.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleProfileMenu();
+      }
+    });
+    document.addEventListener('click', event => {
+      if (!profileMenu.contains(event.target)) {
+        profileMenu.classList.remove('is-open');
+        profileTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        profileMenu.classList.remove('is-open');
+        profileTrigger.setAttribute('aria-expanded', 'false');
+      }
+    });
+    profileTrigger.dataset.menuReady = 'true';
+  }
 
   if (user && (user.username || user.login || user.nome)) {
     const nomeExibicao = user.username || user.login || user.nome;
@@ -169,8 +182,17 @@ function ensureAuthenticated() {
   return getCurrentUser();
 }
 
-function fazerLogout(e) {
+async function fazerLogout(e) {
   e.preventDefault();
+  try {
+    const resposta = await fetch('/api/auth/logout', { method: 'POST' });
+    const dados = await resposta.json();
+    if (!resposta.ok) throw new Error(dados.erro || 'Não foi possível encerrar a sessão.');
+  } catch (erro) {
+    console.error('Erro ao encerrar sessão:', erro);
+    alert(erro.message || 'Não foi possível encerrar a sessão no servidor.');
+    return;
+  }
   localStorage.removeItem(STORAGE_KEY);
   window.location.reload();
 }
@@ -183,7 +205,7 @@ function irParaPerfil(e) {
 function getMinhaListaIds() {
   const user = getCurrentUser();
   if (!user) return [];
-  const wallet = user.walletAddress || user.wallet_address;
+  const wallet = user.walletAddress || user.wallet_address || user.login || user.email;
   const raw = localStorage.getItem(`bookhub_lista_${wallet}`);
   return raw ? JSON.parse(raw) : [];
 }
@@ -197,7 +219,7 @@ function toggleMinhaLista(e, idLivro) {
     return;
   }
   
-  const wallet = user.walletAddress || user.wallet_address;
+  const wallet = user.walletAddress || user.wallet_address || user.login || user.email;
   const key = `bookhub_lista_${wallet}`;
   let idsLista = getMinhaListaIds();
   
@@ -208,7 +230,18 @@ function toggleMinhaLista(e, idLivro) {
   }
   
   localStorage.setItem(key, JSON.stringify(idsLista));
+  const activeCard = activeBookFocus?.card;
+  const reopenSummary = activeCard?.dataset.bookId === String(idLivro);
+  if (activeBookFocus) fecharResumoEmFoco();
   carregarMinhaListaLocal();
+  if (reopenSummary) {
+    requestAnimationFrame(() => {
+      const refreshedCard = [...document.querySelectorAll('.book-card')]
+        .find(card => card.dataset.bookId === String(idLivro));
+      const refreshedSummary = refreshedCard?.querySelector('.book-summary');
+      if (refreshedCard && refreshedSummary) abrirResumoEmFoco(refreshedCard, refreshedSummary);
+    });
+  }
 }
 
 function carregarMinhaListaLocal() {
@@ -222,83 +255,190 @@ function carregarMinhaListaLocal() {
   }
 }
 
+function escaparHTML(valor) {
+  return String(valor).replace(/[&<>"']/g, caractere => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  })[caractere]);
+}
+
+function obterTituloLivro(livro) {
+  const candidatos = [
+    livro.titulo,
+    livro.titulo_original,
+    livro.original_title,
+    livro.titulo_catalogo,
+    livro.title
+  ];
+  const titulo = candidatos
+    .map(valor => String(valor || '').trim())
+    .find(valor => valor && !/^(?:t[ií]tulo desconhecido|unknown title|livro sem t[ií]tulo)$/i.test(valor));
+  return titulo || 'Obra sem título';
+}
+
+function formatarTituloLivro(valor) {
+  const titulo = String(valor || '').trim();
+  const palavrasMinusculas = new Set(['a', 'as', 'o', 'os', 'um', 'uma', 'uns', 'umas', 'de', 'da', 'das', 'do', 'dos', 'e', 'em', 'no', 'na', 'nos', 'nas', 'por', 'para', 'com']);
+  const palavras = [...titulo.matchAll(/[\p{L}\p{N}][\p{L}\p{M}\p{N}'’.-]*/gu)];
+
+  return titulo.replace(/[\p{L}\p{N}][\p{L}\p{M}\p{N}'’.-]*/gu, (palavra, indice) => {
+    const minuscula = palavra.toLocaleLowerCase('pt-BR');
+    const primeiraOuUltima = indice === palavras[0]?.index || indice === palavras[palavras.length - 1]?.index;
+    if (/^(?=[ivxlcdm]+$)[ivxlcdm]+$/i.test(palavra)) return palavra.toUpperCase();
+    if (!primeiraOuUltima && palavrasMinusculas.has(minuscula)) return minuscula;
+    return minuscula.replace(/(^|[-:])([\p{L}])/gu, (_, separador, letra) => separador + letra.toLocaleUpperCase('pt-BR'));
+  });
+}
+
+function normalizarCategoria(valor) {
+  const genero = String(valor || '').trim();
+  if (!genero) return 'Geral';
+  const chave = genero.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
+  const categorias = [
+    [/school|escolar|school stories/, 'Escolar'],
+    [/fantas|fantasy/, 'Fantasia'],
+    [/adventure|aventura|shounen|shōnen/, 'Aventura'],
+    [/romance|romant/, 'Romance'],
+    [/science fiction|ficcao cientifica|sci-fi/, 'Ficção científica'],
+    [/mystery|misterio|crime|detective/, 'Mistério'],
+    [/horror|terror|halloween/, 'Terror'],
+    [/history|historia|historical/, 'História'],
+    [/biograph|autobiograph|biograf/, 'Biografia'],
+    [/poetry|poesia/, 'Poesia'],
+    [/drama/, 'Drama'],
+    [/manga|comic|graphic novel/, 'Quadrinhos'],
+    [/children|infantil|juvenile|young adult/, 'Infantil'],
+    [/fiction|ficcao/, 'Ficção']
+  ];
+  return categorias.find(([padrao]) => padrao.test(chave))?.[1] || 'Geral';
+}
+
+function obterGenerosLivro(livro) {
+  const genero = String(livro.genero || '').trim();
+  if (!genero) return ['Geral'];
+  const categorias = genero.split(/[,;|/]+/).map(normalizarCategoria);
+  const unicas = [...new Set(categorias.filter(Boolean))];
+  const especificas = unicas.filter(categoria => categoria !== 'Ficção' && categoria !== 'Geral');
+  return especificas.length ? especificas : unicas;
+}
+
 function criarCartaoLivro(b) {
   const card = document.createElement('article');
   card.className = 'book-card';
   card.tabIndex = 0;
+  card.dataset.bookId = String(b.id);
+  const tituloLivro = formatarTituloLivro(obterTituloLivro(b));
+  const autorLivro = String(b.autor || 'Autor desconhecido').trim();
 
   const idsLista = getMinhaListaIds();
   const isLiked = idsLista.includes(b.id);
-  const likeIcon = isLiked ? '❤️' : '🤍';
+  const likeIcon = isLiked
+    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>'
+    : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>';
 
-  const primeiraPalavra = b.titulo ? b.titulo.split(' ')[0] : 'Livro';
-  const capaHTML = b.url_capa
-    ? `<img src="${b.url_capa}" alt="${b.titulo}" onerror="this.outerHTML='<span style=\'font-size:14px; font-weight:bold; color:#fff;\'>${primeiraPalavra}</span>'">`
-    : `<span style="font-size:14px; font-weight:bold; color:#fff;">${primeiraPalavra}</span>`;
-
-  const generoTexto = obterGeneroLivro(b);
+  const primeiraPalavra = tituloLivro.split(/\s+/)[0] || 'Livro';
+  const generos = obterGenerosLivro(b);
+  const generoTexto = generos[0];
   const disponivel = b.disponivel !== false;
   const statusBadge = disponivel
-    ? '<span class="badge-disponivel">Disponível</span>'
-    : '<span class="badge-indisponivel">Indisponível</span>';
-
-  const botaoReserva = disponivel
-    ? `<button class="btn-reservar" onclick="fazerPreReserva(${b.id}, '${b.titulo.replace(/'/g, "")}')">Pré-Reservar</button>`
-    : '<button class="btn-reservar" disabled style="opacity: 0.5; cursor: not-allowed;">Reservado</button>';
+    ? '<div class="book-status badge-disponivel"><span class="book-status-dot" aria-hidden="true"></span>Disponível</div>'
+    : '<div class="book-status badge-indisponivel"><span class="book-status-dot" aria-hidden="true"></span>Indisponível</div>';
+  const capaHTML = b.url_capa
+    ? `<img class="book-cover-image" src="${escaparHTML(b.url_capa)}" alt="Capa de ${escaparHTML(tituloLivro)}">`
+    : `<span class="book-cover-fallback">${escaparHTML(primeiraPalavra)}</span>`;
 
   card.innerHTML = `
     <div class="book-cover">
       ${capaHTML}
-      <button class="btn-like ${isLiked ? 'liked' : ''}" onclick="toggleMinhaLista(event, ${b.id})" title="Adicionar à Minha Lista">${likeIcon}</button>
+      ${statusBadge}
     </div>
     <div class="book-details">
-      <div class="book-meta-top">
-        <span class="book-genre" title="${generoTexto}">${generoTexto}</span>
-        ${statusBadge}
-      </div>
-      <h4 class="book-title" title="${b.titulo}">${b.titulo}</h4>
-      <p class="book-author" title="${b.autor}">${b.autor}</p>
-      ${botaoReserva}
+      <span class="book-genre" title="${escaparHTML(generoTexto)}">${escaparHTML(generoTexto)}</span>
+      <h4 class="book-title" title="${escaparHTML(tituloLivro)}">${escaparHTML(tituloLivro)}</h4>
+      <p class="book-author" title="${escaparHTML(autorLivro)}">${escaparHTML(autorLivro)}</p>
     </div>
   `;
 
+  const capa = card.querySelector('.book-cover-image');
+  if (capa) {
+    capa.loading = 'lazy';
+    capa.decoding = 'async';
+    capa.addEventListener('error', () => {
+      const fallback = document.createElement('span');
+      fallback.className = 'book-cover-fallback';
+      fallback.textContent = primeiraPalavra;
+      capa.replaceWith(fallback);
+    }, { once: true });
+  }
+
   const resumo = document.createElement('div');
   resumo.className = 'book-summary';
-  resumo.setAttribute('role', 'note');
-  resumo.setAttribute('aria-label', `Resumo de ${b.titulo || 'livro'}`);
+  resumo.setAttribute('role', 'region');
+  resumo.setAttribute('aria-label', `Detalhes de ${tituloLivro}`);
 
   const tituloResumo = document.createElement('span');
   tituloResumo.className = 'book-summary-heading';
-  tituloResumo.textContent = 'Sobre este livro';
+  tituloResumo.textContent = 'Detalhes do livro';
+
+  const botaoFechar = document.createElement('button');
+  botaoFechar.type = 'button';
+  botaoFechar.className = 'book-summary-close';
+  botaoFechar.setAttribute('aria-label', 'Fechar detalhes do livro');
+  botaoFechar.textContent = '×';
+  botaoFechar.addEventListener('click', fecharResumoEmFoco);
+
+  const tituloDetalhe = document.createElement('h4');
+  tituloDetalhe.className = 'book-summary-title';
+  tituloDetalhe.textContent = tituloLivro;
+
+  const generosDetalhe = document.createElement('p');
+  generosDetalhe.className = 'book-summary-categories';
+  generosDetalhe.textContent = `Categorias: ${generos.join(', ')}`;
 
   const textoResumo = document.createElement('p');
   textoResumo.className = 'book-summary-text';
   textoResumo.textContent = String(b.resumo || b.descricao || '').trim() || 'Resumo ainda não disponível.';
 
-  resumo.append(tituloResumo, textoResumo);
+  const botaoReserva = document.createElement('button');
+  botaoReserva.type = 'button';
+  botaoReserva.className = 'btn-reservar';
+  botaoReserva.textContent = disponivel ? 'Pré-Reservar' : 'Indisponível';
+  botaoReserva.disabled = !disponivel;
+  botaoReserva.addEventListener('click', event => {
+    event.stopPropagation();
+    if (disponivel) fazerPreReserva(b.id, tituloLivro);
+  });
+
+  const botaoLista = document.createElement('button');
+  botaoLista.type = 'button';
+  botaoLista.className = `btn-like ${isLiked ? 'liked' : ''}`;
+  botaoLista.title = isLiked ? 'Remover da Minha Lista' : 'Adicionar à Minha Lista';
+  botaoLista.setAttribute('aria-label', botaoLista.title);
+  botaoLista.setAttribute('aria-pressed', String(isLiked));
+  botaoLista.innerHTML = `${likeIcon}<span>${isLiked ? 'Na Minha Lista' : 'Adicionar à Minha Lista'}</span>`;
+  botaoLista.addEventListener('click', event => toggleMinhaLista(event, b.id));
+
+  resumo.append(tituloResumo, botaoFechar, tituloDetalhe, generosDetalhe, textoResumo, botaoLista, botaoReserva);
   card.querySelector('.book-details').appendChild(resumo);
 
-  card.addEventListener('pointerenter', event => {
-    if (event.pointerType === 'mouse' || event.pointerType === 'pen') {
-      cancelarFechamentoResumo();
+  card.addEventListener('click', event => {
+    if (event.target.closest('button, a')) return;
+    if (activeBookFocus?.card === card) {
+      fecharResumoEmFoco();
+    } else {
       abrirResumoEmFoco(card, resumo);
     }
   });
-  card.addEventListener('pointerleave', event => {
-    if (!resumo.contains(event.relatedTarget)) agendarFechamentoResumo();
+  card.addEventListener('keydown', event => {
+    if ((event.key === 'Enter' || event.key === ' ') && event.target === card) {
+      event.preventDefault();
+      if (activeBookFocus?.card === card) fecharResumoEmFoco();
+      else abrirResumoEmFoco(card, resumo);
+    }
   });
-  card.addEventListener('focusin', () => {
-    cancelarFechamentoResumo();
-    abrirResumoEmFoco(card, resumo);
-  });
-  card.addEventListener('focusout', event => {
-    if (!card.contains(event.relatedTarget)) agendarFechamentoResumo();
-  });
-  card.addEventListener('click', event => {
-    if (event.target.closest('button, a') || !window.matchMedia('(hover: none)').matches) return;
-    if (!activeBookFocus || activeBookFocus.card !== card) abrirResumoEmFoco(card, resumo);
-  });
-  resumo.addEventListener('pointerleave', agendarFechamentoResumo);
   return card;
 }
 
@@ -352,8 +492,7 @@ function criarCarrossel(titulo, listaLivros) {
 }
 
 function obterGeneroLivro(livro) {
-  const genero = typeof livro.genero === 'string' ? livro.genero.trim() : '';
-  return genero || 'Geral';
+  return obterGenerosLivro(livro)[0] || 'Geral';
 }
 
 function renderRowsInterface() {
@@ -372,15 +511,17 @@ function renderRowsInterface() {
   }
 
   const recentes = [...books].slice(0, 15);
-  mainContentRows.appendChild(criarCarrossel('Descubra suas próximas histórias', recentes));
+  mainContentRows.appendChild(criarCarrossel('Livros disponíveis para reserva', recentes));
 
-  const generos = [...new Map(books.map(livro => {
-    const genero = obterGeneroLivro(livro);
-    return [genero.toLocaleLowerCase('pt-BR'), genero];
-  })).values()];
+  const generos = [...new Map(books.flatMap(livro =>
+    obterGenerosLivro(livro).map(genero => [genero.toLocaleLowerCase('pt-BR'), genero])
+  )).values()];
 
   generos.forEach(genero => {
-    const livrosDaCategoria = books.filter(livro => obterGeneroLivro(livro).toLocaleLowerCase('pt-BR') === genero.toLocaleLowerCase('pt-BR'));
+    if (genero.toLocaleLowerCase('pt-BR') === 'geral') return;
+    const livrosDaCategoria = books.filter(livro =>
+      obterGenerosLivro(livro).some(categoria => categoria.toLocaleLowerCase('pt-BR') === genero.toLocaleLowerCase('pt-BR'))
+    );
     if (livrosDaCategoria.length > 0) mainContentRows.appendChild(criarCarrossel(genero, livrosDaCategoria));
   });
 }
@@ -418,25 +559,29 @@ function renderGridInterface(lista) {
 
 async function fazerPreReserva(idLivro, tituloLivro) {
   const usuario = ensureAuthenticated();
-  if (!usuario || (!usuario.walletAddress && !usuario.wallet_address)) {
+  if (!usuario || (!usuario.walletAddress && !usuario.wallet_address && !usuario.login && !usuario.email)) {
     window.location.href = '/login/login.html';
     return;
   }
 
-  const identificador = usuario.walletAddress || usuario.wallet_address;
+  const identificador = usuario.walletAddress || usuario.wallet_address || usuario.login || usuario.email;
 
   try {
     const res = await fetch('/api/reservas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id_livro: idLivro, login: identificador, usuario_nome: identificador })
+      body: JSON.stringify({ id_livro: idLivro })
     });
+    const resultado = await res.json();
 
     if (res.ok) {
-      alert(`✨ Pré-reserva solicitada com sucesso para o livro "${tituloLivro}".`);
+      const mensagemPontos = resultado.pontos_ganhos
+        ? ' Você ganhou 1 ponto nesta temporada!'
+        : ' Você já ganhou o ponto deste livro nesta temporada.';
+      alert(`✨ Pré-reserva solicitada com sucesso para o livro "${tituloLivro}".${mensagemPontos}`);
       carregarLivros();
     } else {
-      alert('Erro ao solicitar pré-reserva.');
+      alert(resultado.erro || 'Erro ao solicitar pré-reserva.');
     }
   } catch (err) {
     console.error(err);
@@ -445,10 +590,9 @@ async function fazerPreReserva(idLivro, tituloLivro) {
 }
 
 function atualizarFiltrosCategorias(listaLivros) {
-  const generosUnicos = [...new Map(listaLivros.map(livro => {
-    const genero = obterGeneroLivro(livro);
-    return [genero.toLocaleLowerCase('pt-BR'), genero];
-  })).values()];
+  const generosUnicos = [...new Map(listaLivros.flatMap(livro =>
+    obterGenerosLivro(livro).map(genero => [genero.toLocaleLowerCase('pt-BR'), genero])
+  )).values()].filter(genero => genero.toLocaleLowerCase('pt-BR') !== 'geral');
   const generos = ['todos', ...generosUnicos];
 
   if (!filterChipsContainer) return;
@@ -458,7 +602,7 @@ function atualizarFiltrosCategorias(listaLivros) {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = `chip ${genero === categoriaAtiva ? 'active' : ''}`;
-    btn.textContent = genero.charAt(0).toUpperCase() + genero.slice(1);
+    btn.textContent = genero === 'todos' ? 'Todos' : genero;
     btn.setAttribute('aria-pressed', String(genero === categoriaAtiva));
 
     btn.addEventListener('click', () => {
@@ -476,6 +620,12 @@ function atualizarFiltrosCategorias(listaLivros) {
   });
 }
 
+function atualizarVisibilidadeCategorias(visible) {
+  if (!categoriesSection || !searchEl) return;
+  categoriesSection.hidden = !visible;
+  searchEl.setAttribute('aria-expanded', String(visible));
+}
+
 function aplicarFiltros() {
   const termoBusca = searchEl ? searchEl.value.toLowerCase().trim() : '';
 
@@ -485,11 +635,15 @@ function aplicarFiltros() {
   }
 
   const livrosFiltrados = books.filter(b => {
-    const matchCategoria = categoriaAtiva === 'todos' || obterGeneroLivro(b).toLowerCase() === categoriaAtiva.toLowerCase();
+    const titulo = obterTituloLivro(b).toLocaleLowerCase('pt-BR');
+    const autor = String(b.autor || '').toLocaleLowerCase('pt-BR');
+    const genero = String(b.genero || '').toLocaleLowerCase('pt-BR');
+    const matchCategoria = categoriaAtiva === 'todos' ||
+      obterGenerosLivro(b).some(categoria => categoria.toLocaleLowerCase('pt-BR') === categoriaAtiva.toLocaleLowerCase('pt-BR'));
     const matchBusca = !termoBusca ||
-      b.titulo.toLowerCase().includes(termoBusca) ||
-      b.autor.toLowerCase().includes(termoBusca) ||
-      (b.genero && b.genero.toLowerCase().includes(termoBusca));
+      titulo.toLowerCase().includes(termoBusca) ||
+      autor.includes(termoBusca) ||
+      genero.includes(termoBusca);
 
     return matchCategoria && matchBusca;
   });
@@ -502,7 +656,23 @@ function aplicarFiltros() {
   renderGridInterface(livrosFiltrados);
 }
 
-searchEl && searchEl.addEventListener('input', aplicarFiltros);
+if (searchEl) {
+  searchEl.addEventListener('focus', () => atualizarVisibilidadeCategorias(true));
+  searchEl.addEventListener('input', () => {
+    atualizarVisibilidadeCategorias(true);
+    aplicarFiltros();
+  });
+
+  document.addEventListener('click', event => {
+    const clicouNaPesquisa = searchEl.contains(event.target);
+    const clicouNasCategorias = categoriesSection?.contains(event.target);
+    const filtroEmUso = Boolean(searchEl.value.trim()) || categoriaAtiva !== 'todos';
+
+    if (!clicouNaPesquisa && !clicouNasCategorias && !filtroEmUso) {
+      atualizarVisibilidadeCategorias(false);
+    }
+  });
+}
 
 if (connectBtn) {
   connectBtn.addEventListener('click', async (e) => {
@@ -513,7 +683,7 @@ if (connectBtn) {
       return;
     }
 
-    const identificador = user.walletAddress || user.wallet_address;
+    const identificador = user.walletAddress || user.wallet_address || user.login || user.email;
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -539,17 +709,48 @@ if (connectBtn) {
 }
 
 async function carregarLivros() {
+  let carregouCache = false;
+
+  try {
+    const cache = localStorage.getItem(BOOKS_CACHE_KEY);
+    if (cache) {
+      const livrosEmCache = JSON.parse(cache);
+      if (Array.isArray(livrosEmCache)) {
+        books = livrosEmCache;
+        carregarMinhaListaLocal();
+        atualizarFiltrosCategorias(books);
+        carregouCache = true;
+      }
+    }
+  } catch (erro) {
+    console.warn('Não foi possível ler o catálogo salvo localmente:', erro);
+  }
+
+  if (!carregouCache && mainContentRows) {
+    mainContentRows.innerHTML = '<p class="catalog-loading" role="status">Carregando livros...</p>';
+  }
+
   try {
     const resposta = await fetch('/api/livros');
-    books = await resposta.json();
+    if (!resposta.ok) throw new Error(`Falha ao carregar catálogo (HTTP ${resposta.status}).`);
+    const livrosAtualizados = await resposta.json();
+    if (!Array.isArray(livrosAtualizados)) throw new Error('A resposta do catálogo está em formato inválido.');
+    books = livrosAtualizados;
     
     carregarMinhaListaLocal();
     atualizarFiltrosCategorias(books);
+    try {
+      localStorage.setItem(BOOKS_CACHE_KEY, JSON.stringify(books));
+    } catch (erro) {
+      console.warn('Não foi possível salvar o catálogo localmente:', erro);
+    }
   } catch (erro) {
-    if (mainContentRows) {
-      mainContentRows.innerHTML = '<p style="color: #737373; padding: 0 4%;">Não foi possível carregar os livros do servidor.</p>';
+    if (!carregouCache && mainContentRows) {
+      mainContentRows.innerHTML = '<p class="catalog-loading" role="status">Não foi possível carregar os livros. Verifique sua conexão e tente novamente.</p>';
     }
     console.error('Erro ao carregar livros:', erro);
+  } finally {
+    if (mainContentRows) mainContentRows.setAttribute('aria-busy', 'false');
   }
 }
 

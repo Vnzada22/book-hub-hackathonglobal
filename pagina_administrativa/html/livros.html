@@ -6,9 +6,8 @@
   <title>Painel Admin — BookHub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Literata:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/admin/css/livros.css">
-  <link rel="stylesheet" href="/css/theme-polish.css">
 </head>
 <body>
   <header class="netflix-header">
@@ -24,22 +23,35 @@
       <form id="formLivro">
         <input type="hidden" id="livroId">
 
-        <div class="input-group">
-          <label for="titulo">Título do Livro *</label>
-          <div class="ia-group">
-            <input type="text" id="titulo" required placeholder="Ex: O Pequeno Príncipe">
-            <button type="button" id="btnIA" class="btn-ia">🔎 Buscar dados verificados</button>
-            <button type="button" id="btnIAVarios" class="btn-ia btn-ia-multiplo">🔎 Buscar vários livros</button>
+        <section class="catalog-search-card single-book-search">
+          <h3>Procurar um livro</h3>
+          <div class="input-group">
+            <label for="titulo">Título do Livro *</label>
+            <div class="ia-group">
+              <input type="text" id="titulo" required placeholder="Ex: O Pequeno Príncipe">
+              <button type="button" id="btnIA" class="btn-ia">Procurar um livro</button>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div id="multiIABox" class="multi-ia-box" style="display: none;">
-          <label for="listaTitulosIA">Adicionar vários livros dos catálogos</label>
-          <textarea id="listaTitulosIA" rows="4" placeholder="Ex: O Pequeno Príncipe, Dom Quixote, O Alquimista"></textarea>
-          <div class="multi-ia-actions">
-            <button type="button" id="btnProcessarMultiplos" class="btn-salvar btn-multi-processar">Buscar e adicionar livros</button>
+        <section id="multiIABox" class="catalog-search-card multi-ia-box">
+          <h3>Adicionar vários livros dos catálogos</h3>
+          <div class="multi-ia-entry">
+            <label for="listaTitulosIA">Títulos dos livros</label>
+            <textarea id="listaTitulosIA" rows="4" placeholder="Digite ou cole os títulos separados por vírgula ou por linha. Ex: O Pequeno Príncipe, Dom Quixote, O Alquimista"></textarea>
+            <button type="button" id="btnProcessarMultiplos" class="btn-salvar btn-multi-processar">Buscar vários livros</button>
           </div>
-        </div>
+          <section id="multiIAReview" class="multi-ia-review" aria-live="polite" hidden>
+            <h3>Revise as informações antes de salvar</h3>
+            <p>Os dados encontrados ainda não foram adicionados ao acervo. Confira ou edite cada livro e salve somente quando estiver pronto.</p>
+            <div id="multiIAResults" class="multi-ia-results"></div>
+            <div id="multiIASkipped" class="multi-ia-skipped"></div>
+            <div class="multi-ia-save-all-wrap">
+              <button type="button" id="btnSalvarTodosMultiplos" class="btn-salvar btn-multi-save-all">Salvar todos os livros válidos</button>
+              <span id="multiIASaveAllStatus" class="multi-ia-save-all-status" role="status" aria-live="polite"></span>
+            </div>
+          </section>
+        </section>
 
         <div class="form-grid-2">
           <div class="input-group">

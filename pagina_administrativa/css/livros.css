@@ -108,13 +108,34 @@ button, input, textarea, select, a {
   gap: 10px;
 }
 
+.catalog-search-card {
+  margin: 0 0 18px;
+  padding: 18px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+}
+.catalog-search-card h3 {
+  margin: 0 0 14px;
+  color: #fff;
+  font-size: 17px;
+}
+.single-book-search .input-group { margin: 0; }
+.single-book-search .ia-group { align-items: stretch; }
+.single-book-search .ia-group input { min-height: 48px; }
+.single-book-search .btn-ia {
+  flex: 0 0 210px;
+  min-height: 48px;
+  white-space: normal;
+}
+
 .btn-ia {
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.18); color: white;
+  background: linear-gradient(135deg, #e50914, #c80812); border: 1px solid rgba(255, 90, 96, 0.2); color: white;
   padding: 10px 18px; border-radius: 999px; font-weight: 700; cursor: pointer;
-  transition: all 0.2s ease; box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  transition: all 0.2s ease; box-shadow: 0 8px 22px rgba(229, 9, 20, 0.2);
 }
 .btn-ia:hover {
-  background: rgba(229, 9, 20, 0.12); border-color: rgba(229, 9, 20, 0.5); transform: translateY(-1px); box-shadow: 0 10px 22px rgba(229, 9, 20, 0.2);
+  background: linear-gradient(135deg, #ff2935, #df0712); border-color: rgba(255, 90, 96, 0.35); transform: translateY(-1px); box-shadow: 0 12px 28px rgba(229, 9, 20, 0.3);
 }
 
 .btn-ia-multiplo {
@@ -122,34 +143,106 @@ button, input, textarea, select, a {
 }
 
 .multi-ia-box {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 18px;
+  display: block;
 }
 
-.multi-ia-box label {
+.multi-ia-entry label {
   display: block;
   margin-bottom: 8px;
   color: var(--net-light-gray);
   font-size: 14px;
 }
 
-.multi-ia-box textarea {
-  min-height: 110px;
-  resize: vertical;
-}
-
-.multi-ia-actions {
+.multi-ia-entry {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
+  align-items: flex-end;
+  gap: 14px;
+}
+.multi-ia-entry label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.multi-ia-entry textarea {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 150px;
+  resize: vertical;
+  line-height: 1.6;
 }
 
 .btn-multi-processar {
-  min-width: 200px;
+  flex: 0 0 210px;
+  min-height: 48px;
 }
+
+.multi-ia-review {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.multi-ia-review[hidden] { display: none; }
+.multi-ia-review h3 { margin: 0 0 6px; font-size: 18px; }
+.multi-ia-review > p { margin: 0 0 16px; color: #bcbcc3; font-size: 13px; line-height: 1.5; }
+.multi-ia-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  align-items: start;
+  gap: 12px;
+}
+.multi-ia-book {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  gap: 9px;
+  min-width: 0;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 12px;
+}
+.multi-ia-book h4 { grid-column: 1 / -1; margin: 0; font-size: 14px; line-height: 1.35; }
+.multi-ia-book .input-group { min-width: 0; margin: 0; }
+.multi-ia-book .input-group label { margin-bottom: 4px; font-size: 11px; }
+.multi-ia-book .input-group.full-width,
+.multi-ia-book .book-source,
+.multi-ia-book .book-review-status,
+.multi-ia-book .btn-save-review { grid-column: 1 / -1; }
+.multi-ia-book .input-group input,
+.multi-ia-book .input-group textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.multi-ia-book .input-group textarea { min-height: 64px; resize: vertical; }
+.multi-ia-book .book-source { margin: 0; color: #a5a5ad; font-size: 10px; line-height: 1.4; }
+.multi-ia-book .book-source-links { grid-column: 1 / -1; margin: 0; color: #a5a5ad; font-size: 10px; }
+.multi-ia-book .book-source-links a { color: #ff7a82; }
+.multi-ia-book .book-review-status { margin: 0; color: #ffb7bc; font-size: 11px; line-height: 1.4; }
+.multi-ia-book .book-review-status.is-saved { color: #8de0b5; }
+.multi-ia-book .btn-save-review { justify-self: stretch; padding: 8px 12px; font-size: 12px; }
+.multi-ia-skipped { margin-top: 16px; color: #c5c5cc; font-size: 13px; line-height: 1.6; }
+.multi-ia-save-all-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.btn-multi-save-all { min-width: 240px; }
+.multi-ia-save-all-status { color: #bdbdc4; font-size: 13px; }
+.multi-ia-save-all-status.is-success { color: #8de0b5; }
+.multi-ia-save-all-status.is-error { color: #ffb7bc; }
 
 .form-grid-2 {
   display: grid;
@@ -332,3 +425,366 @@ th {
     flex-direction: column;
   }
 }
+
+/* Identidade visual compartilhada do BookHub */
+:root {
+  --bookhub-font-ui: 'Outfit', 'Segoe UI', Arial, sans-serif;
+  --bookhub-font-editorial: 'Fraunces', Georgia, serif;
+  --bookhub-font-brand: 'Bebas Neue', Impact, sans-serif;
+  --bookhub-bg: #0b0b0d;
+  --bookhub-surface: #17171a;
+  --bookhub-surface-raised: #202024;
+  --bookhub-red: #e50914;
+  --bookhub-red-bright: #ff2835;
+  --bookhub-text: #f5f5f5;
+  --bookhub-muted: #a6a6ad;
+  --bookhub-border: rgba(255, 255, 255, 0.1);
+  --bookhub-shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
+  color-scheme: dark;
+}
+
+html { scroll-behavior: smooth; background: var(--bookhub-bg); }
+body {
+  min-height: 100vh;
+  background-color: var(--bookhub-bg);
+  color: var(--bookhub-text);
+  font-family: var(--bookhub-font-ui);
+  font-size: 15px;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea, select, a { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+  outline: 2px solid var(--bookhub-red-bright);
+  outline-offset: 3px;
+}
+button:disabled { cursor: not-allowed; opacity: 0.58; transform: none; }
+::selection { color: #fff; background: rgba(229, 9, 20, 0.72); }
+
+/* Cabeçalhos e navegação */
+.netflix-header {
+  background: linear-gradient(180deg, rgba(8, 8, 9, 0.97), rgba(14, 14, 16, 0.88));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.netflix-logo, .site-logo {
+  color: var(--bookhub-red) !important;
+  text-decoration: none;
+  text-shadow: 0 0 24px rgba(229, 9, 20, 0.22);
+}
+.profile-menu { z-index: 1100; }
+.profile-avatar img, .dropdown-header img { border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 50%; }
+.profile-dropdown {
+  background: rgba(20, 20, 22, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+}
+.profile-dropdown a {
+  margin: 2px 8px;
+  border-radius: 9px;
+  color: #c4c4ca;
+  text-decoration: none;
+}
+.profile-dropdown a:hover { color: #fff; background: rgba(229, 9, 20, 0.13); text-decoration: none; }
+.dropdown-divider { background: rgba(255, 255, 255, 0.1); }
+.nav-links a, .netflix-nav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 6px 13px;
+  color: #eee;
+  background: rgba(229, 9, 20, 0.1);
+  border: 1px solid rgba(229, 9, 20, 0.48);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+.nav-links a:hover, .nav-links a:focus-visible, .netflix-nav a:hover, .netflix-nav a:focus-visible {
+  color: #fff;
+  background: rgba(229, 9, 20, 0.22);
+  border-color: var(--bookhub-red-bright);
+  transform: translateY(-1px);
+}
+.nav-right, .header-right { align-items: center; }
+#search {
+  color: #fff;
+  background: rgba(17, 17, 19, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+#search::placeholder { color: #8e8e95; }
+#search:focus { border-color: rgba(229, 9, 20, 0.8); box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.16); }
+
+/* Ações: vermelho para avançar e grafite para ações secundárias */
+.btn-admin, .btn-primary, .btn-reservar, .btn-salvar, .btn-salvar-edicao,
+.btn-logout, .btn-multi-processar {
+  color: #fff;
+  background: linear-gradient(135deg, #e50914, #c80812);
+  border: 1px solid rgba(255, 90, 96, 0.2);
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 0 8px 22px rgba(229, 9, 20, 0.2);
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+.btn-admin:hover, .btn-primary:hover, .btn-reservar:hover, .btn-salvar:hover,
+.btn-salvar-edicao:hover, .btn-logout:hover, .btn-multi-processar:hover {
+  color: #fff;
+  background: linear-gradient(135deg, #ff2935, #df0712);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(229, 9, 20, 0.3);
+}
+.btn-voltar, .btn-voltar-vitrine, .btn-ia, .btn-cancelar, .btn-cancelar-edicao, .btn-editar {
+  color: #f4f4f4;
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  font-weight: 600;
+  transition: color 180ms ease, background 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+.btn-voltar:hover, .btn-voltar-vitrine:hover, .btn-ia:hover, .btn-cancelar:hover,
+.btn-cancelar-edicao:hover, .btn-editar:hover {
+  color: #fff;
+  background: rgba(229, 9, 20, 0.13);
+  border-color: rgba(229, 9, 20, 0.58);
+  transform: translateY(-1px);
+}
+.btn-aprovar {
+  color: #fff;
+  background: linear-gradient(135deg, #16875b, #116d49);
+  border: 1px solid rgba(78, 220, 157, 0.24);
+  border-radius: 999px;
+}
+.btn-aprovar:hover { background: linear-gradient(135deg, #1da36d, #168257); transform: translateY(-1px); }
+.btn-rejeitar, .btn-excluir {
+  color: #fff;
+  background: rgba(229, 9, 20, 0.1);
+  border: 1px solid rgba(229, 9, 20, 0.45);
+  border-radius: 999px;
+}
+.btn-rejeitar:hover, .btn-excluir:hover {
+  background: rgba(229, 9, 20, 0.22);
+  border-color: var(--bookhub-red-bright);
+  transform: translateY(-1px);
+}
+.btn-editar-perfil {
+  color: #fff;
+  background: rgba(229, 9, 20, 0.1);
+  border: 1px solid rgba(229, 9, 20, 0.5);
+  border-radius: 999px;
+}
+.btn-editar-perfil:hover { color: #fff; background: var(--bookhub-red); border-color: var(--bookhub-red); }
+
+/* Campos, painéis e tabelas */
+input:not([type="hidden"]), textarea, select {
+  color: #f5f5f5;
+  background: #1d1d20;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 10px;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+input::placeholder, textarea::placeholder { color: #87878e; }
+input:focus, textarea:focus, select:focus {
+  background: #222226;
+  border-color: rgba(229, 9, 20, 0.75);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15);
+}
+input:disabled, input[readonly] { color: #a4a4aa; background: #151517; }
+.admin-card, .table-container, .ranking-table-card, .card-painel, .login-box, .catalog-search-card {
+  background: linear-gradient(145deg, rgba(29, 29, 33, 0.97), rgba(19, 19, 22, 0.98));
+  border: 1px solid var(--bookhub-border);
+  border-radius: 18px;
+  box-shadow: var(--bookhub-shadow);
+}
+table { color: var(--bookhub-text); }
+th, td { border-color: rgba(255, 255, 255, 0.09); }
+th { color: #bdbdc4; }
+tbody tr { transition: background 160ms ease; }
+tbody tr:hover { background: rgba(255, 255, 255, 0.035); }
+
+/* Administração e reservas */
+.admin-container { max-width: 1160px; margin: 32px auto; }
+.admin-card { padding: clamp(20px, 3vw, 32px); }
+.admin-card h2 { color: #fff; border-bottom-color: rgba(229, 9, 20, 0.5); font-weight: 700; }
+.input-group label, .multi-ia-box label { color: #c4c4ca; font-weight: 500; }
+.ia-group { align-items: center; }
+.ia-group input { min-width: 0; flex: 1 1 260px; }
+.btn-ia { white-space: nowrap; }
+.table-responsive, .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-container { padding: clamp(12px, 2vw, 24px); }
+table { min-width: 640px; }
+th, td { padding: 14px 16px; }
+th { font-size: 11px; letter-spacing: 0.08em; }
+.book-cover { border-radius: 8px; }
+.catalog-search-card { background: rgba(255, 255, 255, 0.025); }
+.row-title { color: #f5f5f5; }
+
+@media (max-width: 850px) {
+  .netflix-header { height: auto; min-height: 68px; padding: 10px 4%; gap: 8px; }
+  .nav-left { gap: 12px; }
+  .nav-links { display: flex !important; gap: 5px; }
+  .nav-links a, .netflix-nav a { min-height: 31px; padding: 5px 9px; font-size: 11px; }
+  #search { width: min(28vw, 210px); }
+  .conta-grid { grid-template-columns: 200px minmax(0, 1fr); }
+  .podium-card { width: min(30%, 220px); }
+}
+
+@media (max-width: 640px) {
+  .netflix-header { flex-wrap: wrap; justify-content: center; }
+  .nav-left { width: 100%; justify-content: center; flex-wrap: wrap; }
+  .nav-right, .header-right { width: 100%; justify-content: center; }
+  #search { width: min(66vw, 330px); }
+  .netflix-hero { height: 610px; min-height: 0; padding: 190px 22px 82px; background-position: 58% center; }
+  .hero-info h2 { font-size: clamp(34px, 10vw, 52px); }
+  .hero-info p { font-size: 14px; }
+  .categories-section { padding-right: 20px; padding-left: 20px; }
+  .categories-flex { gap: 7px; }
+  .chip { padding: 7px 11px; font-size: 12px; }
+  .row-title { margin-left: 20px; margin-right: 20px; }
+  .row-sliders { padding-left: 20px; padding-right: 20px; }
+  .slider-btn { width: 36px; height: 36px; opacity: 0.82; font-size: 22px; }
+  .slider-btn.prev { left: 4px; }
+  .slider-btn.next { right: 4px; }
+  .slider-btn:hover { font-size: 22px; }
+  .book-details { gap: 7px; padding: 11px; }
+  .book-meta-top { flex-wrap: wrap; align-items: flex-start; }
+  .book-genre { max-width: 100%; }
+  .books-grid { padding: 0 20px; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); }
+  .conta-container { margin: 28px auto; padding: 0 16px; }
+  .conta-grid { grid-template-columns: 1fr; gap: 16px; }
+  .conta-menu { flex-direction: row; overflow-x: auto; }
+  .menu-item { flex: 0 0 auto; white-space: nowrap; }
+  .menu-item.ativo { box-shadow: inset 0 -3px var(--bookhub-red); }
+  .header-linha { align-items: flex-start; }
+  .info-linha { align-items: flex-start; flex-direction: column; gap: 3px; padding: 12px 0; }
+  .admin-container { margin: 20px auto; padding: 0 14px 36px; }
+  .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+  .multi-ia-results { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+  .multi-ia-book { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 10px; }
+  .multi-ia-book h4, .multi-ia-book .input-group.full-width, .multi-ia-book .book-source,
+  .multi-ia-book .book-source-links, .multi-ia-book .book-review-status,
+  .multi-ia-book .btn-save-review { grid-column: 1 / -1; }
+  .ia-group { flex-wrap: wrap; }
+  .ia-group input, .ia-group .btn-ia { width: 100%; }
+  .single-book-search .btn-ia { flex-basis: auto; }
+  .multi-ia-entry { align-items: stretch; flex-direction: column; }
+  .multi-ia-entry textarea { min-height: 180px; }
+  .btn-multi-processar { flex-basis: auto; width: 100%; }
+  .form-actions { flex-wrap: wrap; }
+  .form-actions > button { flex: 1 1 150px; }
+  .multi-ia-save-all-wrap { align-items: stretch; flex-direction: column; }
+  .btn-multi-save-all { width: 100%; }
+  .ranking-container { margin: 24px auto; padding: 0 14px 40px; }
+  .podium-section { align-items: stretch; flex-wrap: wrap; gap: 12px; }
+  .podium-card, .podium-card.first, .podium-card.second, .podium-card.third { width: calc(50% - 6px); height: auto; min-height: 190px; }
+}
+
+@media (max-width: 420px) {
+  .netflix-logo { font-size: 31px !important; letter-spacing: 2px !important; }
+  .nav-left { gap: 7px; }
+  .nav-links { width: 100%; justify-content: center; }
+  .nav-links a { padding: 5px 8px; font-size: 10px; }
+  .login-box { padding: 30px 22px; }
+  .podium-card, .podium-card.first, .podium-card.second, .podium-card.third { width: 100%; }
+}
+
+/* Tipografia editorial para leitura e alinhamento consistente */
+.netflix-logo, .site-logo { font-family: var(--bookhub-font-brand) !important; }
+.hero-info h2, .row-title, .book-title, .login-box h2, .conta-container > h2,
+.card-painel h3, .admin-card h2, .ranking-header-title h1, .ranking-table-card h3 {
+  font-family: var(--bookhub-font-editorial);
+  text-wrap: balance;
+}
+.hero-info h2 { font-weight: 600; line-height: 1.08; letter-spacing: -0.035em; }
+.hero-info p { line-height: 1.75; text-wrap: pretty; }
+.row-title { font-weight: 600; line-height: 1.3; }
+.book-details { text-align: left; }
+.book-title { min-height: 2.7em; height: auto; font-size: 13px; font-weight: 600; line-height: 1.35; letter-spacing: -0.01em; }
+.book-author { min-height: 1.5em; font-size: 12px; line-height: 1.45; }
+.book-genre, .badge-disponivel, .badge-indisponivel { font-family: var(--bookhub-font-ui); font-size: 10px; line-height: 1.35; }
+.nav-links a, .netflix-nav a, button, .btn-voltar, .btn-voltar-vitrine { font-family: var(--bookhub-font-ui); letter-spacing: 0.005em; }
+.hero-badge { font-family: var(--bookhub-font-ui); font-size: 11px; line-height: 1.4; }
+
+@media (hover: none) {
+  .book-summary {
+    display: none;
+  }
+  .book-summary-heading { margin-bottom: 4px; font-size: 9px; }
+  .book-summary-text { font-family: var(--bookhub-font-ui); font-size: 11px; -webkit-line-clamp: 3; }
+}
+.login-box h2, .conta-container > h2, .admin-card h2, .ranking-header-title h1, .ranking-table-card h3,
+.card-painel h3 { font-weight: 600; line-height: 1.25; }
+.login-subtitle, .ranking-header-title p, .hero-info p { max-width: 65ch; }
+.input-group label, .multi-ia-box label { font-family: var(--bookhub-font-ui); font-size: 13px; line-height: 1.45; }
+.netflix-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 14px clamp(20px, 4vw, 56px);
+  background: rgba(11, 11, 13, 0.78);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+.netflix-logo { font-family: var(--bookhub-font-brand); }
+.admin-container { max-width: 1240px; margin: clamp(24px, 4vw, 44px) auto; }
+.admin-card {
+  background: linear-gradient(145deg, rgba(29, 29, 33, 0.94), rgba(16, 16, 19, 0.97));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.admin-card h2 {
+  color: #f5f0e9;
+  border-bottom-color: rgba(229, 9, 20, 0.42);
+  font-family: var(--bookhub-font-editorial);
+  font-size: clamp(25px, 3vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+.catalog-search-card {
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+}
+.catalog-search-card h3 { font-family: var(--bookhub-font-editorial); font-weight: 500; }
+.input-group input, .input-group textarea, .input-group select {
+  background: rgba(10, 10, 12, 0.5);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.table-responsive { background: rgba(255, 255, 255, 0.02); }
+.btn-voltar { border-radius: 10px; }
+@media (max-width: 640px) {
+  .admin-container { margin: 20px auto; }
+}
+.single-book-search .btn-ia {
+  color: #fff;
+  background: linear-gradient(135deg, #e50914, #c80812);
+  border-color: rgba(255, 90, 96, 0.2);
+  box-shadow: 0 8px 22px rgba(229, 9, 20, 0.2);
+}
+.single-book-search .btn-ia:hover {
+  color: #fff;
+  background: linear-gradient(135deg, #ff2935, #df0712);
+  border-color: rgba(255, 90, 96, 0.35);
+}
+input, textarea, select { font-family: var(--bookhub-font-ui); font-size: 14px; line-height: 1.45; }
+button { line-height: 1.25; }
+.form-footer, .label, .valor, th, td { font-family: var(--bookhub-font-ui); }
+.info-linha { align-items: center; line-height: 1.5; }
+.tabela-historico th, .tabela-historico td, .ranking-table th, .ranking-table td { line-height: 1.5; vertical-align: middle; }
+.ranking-header-title h1 { text-align: center; }
+.ranking-header-title p { margin-left: auto; margin-right: auto; text-align: center; }
+.ranking-table-card h3, .admin-card h2, .card-painel h3 { text-align: left; }
+.netflix-footer p { max-width: 72ch; line-height: 1.7; }

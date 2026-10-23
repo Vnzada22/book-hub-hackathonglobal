@@ -4,6 +4,7 @@ async function carregarReservas() {
   try {
     const res = await fetch('/api/reservas');
     const reservas = await res.json();
+    if (!res.ok) throw new Error(reservas.erro || 'Não foi possível carregar as reservas.');
     tbodyReservas.innerHTML = '';
 
     if (reservas.length === 0) {
@@ -40,6 +41,7 @@ async function carregarReservas() {
     });
   } catch (err) {
     console.error('Erro ao carregar reservas:', err);
+    tbodyReservas.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--net-red);">${err.message || 'Erro ao carregar reservas.'}</td></tr>`;
   }
 }
 
@@ -61,7 +63,8 @@ window.mudarStatus = async (id, status, motivo = '') => {
     if (res.ok) {
       carregarReservas();
     } else {
-      alert('Erro ao atualizar status da reserva.');
+      const data = await res.json();
+      alert(data.erro || 'Erro ao atualizar status da reserva.');
     }
   } catch (err) {
     console.error(err);

@@ -6,7 +6,7 @@
   <title>BookHub — Conta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Literata:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/perfil/css/perfil.css">
   <style>
     .site-logo { color: #e50914 !important; text-decoration: none !important; font-family: 'Bebas Neue', sans-serif !important; font-size: 38px !important; letter-spacing: 4px !important; }
@@ -34,7 +34,6 @@
     .avatar-option-modal:hover { opacity: 1; }
     .avatar-option-modal.selected { border-color: var(--net-red); opacity: 1; transform: scale(1.05); box-shadow: 0 0 8px rgba(229,9,20,0.4); }
   </style>
-  <link rel="stylesheet" href="/css/theme-polish.css">
 </head>
 <body>
   <header class="netflix-header">
@@ -66,7 +65,14 @@
             <div class="info-linha"><span class="label">Username:</span><span class="valor" id="infoUsername">-</span></div>
             <div class="info-linha"><span class="label">Nome Completo:</span><span class="valor" id="infoNome">-</span></div>
             <div class="info-linha"><span class="label">E-mail:</span><span class="valor" id="infoEmail">-</span></div>
-            <div class="info-linha"><span class="label">Carteira MetaMask:</span><span class="valor carteira" id="infoWallet">-</span></div>
+            <div class="info-linha"><span class="label">Conta vinculada:</span><span class="valor carteira" id="infoWallet">-</span></div>
+          </div>
+          <div class="card-painel ranking-achievements">
+            <h3>Conquistas do Ranking</h3>
+            <p class="ranking-achievements-description">Suas posições de Top 1, Top 2 e Top 3 ficam registradas por temporada.</p>
+            <div id="rankingAchievements" class="ranking-achievements-list" aria-live="polite">
+              <span class="ranking-achievements-empty">Carregando conquistas...</span>
+            </div>
           </div>
           <div class="card-painel logout-section"><button id="btnDesconectar" class="btn-logout">Sair da conta</button></div>
         </div>
@@ -107,15 +113,10 @@
           <input type="hidden" id="editAvatarInput" value="">
         </div>
         
-        <div class="input-group"><label>Carteira MetaMask</label><input type="text" id="editWallet" disabled></div>
+        <div class="input-group"><label>Conta vinculada</label><input type="text" id="editWallet" disabled></div>
         <div class="input-group"><label>Nome Completo</label><input type="text" id="editNome" required></div>
         <div class="input-group"><label>Username</label><input type="text" id="editUsername" required></div>
         <div class="input-group"><label>E-mail</label><input type="email" id="editEmail" required></div>
-        <div class="divisoria" style="margin: 15px 0;"></div>
-        <div class="input-group">
-          <label style="color: var(--net-red); font-weight: 500;">Senha Atual (Obrigatória)</label>
-          <input type="password" id="editSenha" required placeholder="Digite sua senha cadastrada">
-        </div>
         <div class="form-actions">
           <button type="submit" class="btn-salvar-edicao">Salvar</button>
           <button type="button" id="btnCancelarEdicao" class="btn-cancelar-edicao">Cancelar</button>

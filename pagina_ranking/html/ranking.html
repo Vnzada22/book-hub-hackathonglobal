@@ -6,9 +6,8 @@
   <title>BookHub — Ranking de Leitores</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Literata:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/ranking/css/ranking.css">
-  <link rel="stylesheet" href="/css/theme-polish.css">
 </head>
 <body>
   <canvas id="interactiveCanvas"></canvas>
@@ -28,25 +27,33 @@
   <main class="ranking-container">
     <div class="ranking-header-title">
       <h1>🏆 Hall da Fama — Maiores Leitores</h1>
-      <p>Os leitores que mais se destacaram nas reservas e exploração de obras no BookHub.</p>
+      <p>Ganhe pontos com suas atividades no BookHub e conquiste um lugar no pódio da temporada.</p>
+    </div>
+
+    <div class="ranking-season-toolbar">
+      <label for="seasonSelector">Temporada</label>
+      <select id="seasonSelector" aria-label="Selecionar temporada do ranking"></select>
+      <span id="seasonStatusText" role="status"></span>
     </div>
 
     <div class="podium-section" id="podiumSection"></div>
 
     <div class="ranking-table-card">
-      <h3>Classificação Geral</h3>
+      <h3 id="rankingTitle">Classificação da Temporada</h3>
       <table class="ranking-table">
         <thead>
           <tr>
             <th style="width: 80px;">Posição</th>
             <th>Leitor / Usuário</th>
-            <th>Livros Reservados / Lidos</th>
-            <th>Nível / Condecoração</th>
+            <th>Pontos</th>
+            <th>Reconhecimento</th>
           </tr>
         </thead>
         <tbody id="rankingTableBody"></tbody>
       </table>
     </div>
+
+    <p class="ranking-proof" id="rankingProof" hidden></p>
   </main>
 
   <script src="/ranking/js/ranking.js"></script>
