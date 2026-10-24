@@ -1,200 +1,127 @@
-# 📚 BookHub
+# BookHub
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Status-MVP%20Funcional-4CAF50?style=for-the-badge&logo=book" alt="Status do projeto" />
-  <img src="https://img.shields.io/badge/Tipo-Web%20App-FF9800?style=for-the-badge" alt="Tipo do projeto" />
-  <img src="https://img.shields.io/badge/Escola-Biblioteca-2196F3?style=for-the-badge" alt="Aplicação escolar" />
-  <img src="https://img.shields.io/badge/Stack-HTML%20%7C%20CSS%20%7C%20JS-6A5ACD?style=for-the-badge" alt="Stack" />
-</div>
+BookHub é uma aplicação web para consultar o acervo de uma biblioteca física e solicitar a pré-reserva de exemplares para retirada. O catálogo informa a disponibilidade cadastrada no sistema; a confirmação e o atendimento da reserva são feitos pela administração da biblioteca.
 
-<p align="center">
-  <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1200&q=80" alt="Banner da biblioteca" width="100%" />
-</p>
+## Funcionalidades
 
-> Uma plataforma moderna para gestão de biblioteca escolar, com foco em leitura, organização e controle do acervo.
+- Catálogo com busca por título, autor e gênero, filtros de categoria e detalhes do livro.
+- Solicitação de pré-reserva e consulta do status da solicitação.
+- Área de administração para cadastrar, editar e remover livros, revisar solicitações e gerenciar usuários.
+- Busca assistida para preencher dados de livros. A busca combina resultados de Google Books, Open Library, Wikipedia/Wikidata e Internet Archive; Gemini pode auxiliar na geração/normalização de dados quando configurado.
+- Resultados da busca em lote aparecem para revisão antes de serem adicionados ao acervo. Fontes externas podem estar incompletas ou indisponíveis; confirme os dados antes de salvar.
+- Autenticação por código enviado ao e-mail, Google, X e carteira MetaMask. Google, X e e-mail dependem das respectivas configurações; MetaMask requer a extensão no navegador.
+- Perfil do usuário, histórico de reservas e ranking mensal.
 
-BookHub é uma plataforma web dedicada à gestão de biblioteca escolar com foco em organização do acervo, reservas de livros, perfil do usuário e administração do sistema. O objetivo do projeto é facilitar o acesso à leitura, melhorar a experiência de uso para alunos e professores e dar mais controle para quem administra a biblioteca.
+## Tecnologias
 
-## 🏷️ Stack tecnológica
+- Interface: HTML, CSS e JavaScript.
+- Servidor/API: Node.js, Express e JavaScript.
+- Banco de dados: PostgreSQL, conectado pela biblioteca `pg` (o projeto usa Supabase como serviço PostgreSQL).
+- Integrações opcionais: Gemini, Resend, Google OAuth, X OAuth e MetaMask (`ethers`).
 
-<div align="center">
-  <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
-  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/JSON-000000?style=for-the-badge&logo=json&logoColor=white" alt="JSON" />
-  <img src="https://img.shields.io/badge/LocalStorage-FF6F61?style=for-the-badge" alt="LocalStorage" />
-</div>
+Os dados do catálogo, usuários, reservas, autenticação e ranking são armazenados no PostgreSQL. O `localStorage` do navegador guarda informações auxiliares da interface/sessão do usuário; não é o banco principal do projeto.
 
----
+## Estrutura
 
-## ✨ Visão geral do projeto
+```text
+.
+├── img/                         # Avatares e ícones
+├── pagina_administrativa/
+│   ├── html/                    # Painel do acervo
+│   ├── css/
+│   └── java/
+├── pagina_inicial/
+│   ├── html/                    # Catálogo e reservas
+│   ├── css/
+│   └── java/
+├── pagina_login/
+│   ├── html/
+│   ├── css/
+│   └── js/
+├── pagina_perfil/
+│   ├── html/
+│   ├── css/
+│   └── js/
+├── pagina_ranking/
+│   ├── html/
+│   ├── css/
+│   └── js/
+├── supabase/migrations/         # Scripts SQL versionados
+├── server.js
+├── package.json
+└── .env.example
+```
 
-O sistema foi pensado como uma solução prática para escolas e instituições que desejam digitalizar o processo de gestão de livros. A ideia principal é centralizar em um único ambiente o cadastro de livros, a visualização do catálogo, a reserva de exemplares e a administração das movimentações da biblioteca.
+## Requisitos
 
-Além disso, o projeto busca entregar uma experiência amigável e intuitiva, com páginas separadas para login, catálogo, perfil e painel administrativo, tornando o uso mais simples tanto para usuários quanto para administradores.
+- Node.js 18 ou superior e npm.
+- Um banco PostgreSQL acessível pela aplicação.
+- Credenciais das integrações que deseja habilitar.
 
-## ✅ O que já foi desenvolvido
+## Executar localmente
 
-Atualmente, o projeto já conta com uma base funcional de MVP, incluindo:
+1. Clone o repositório e entre na pasta do projeto:
 
-- sistema de login e sessão do usuário;
-- catálogo de livros com visualização do acervo;
-- reservas de livros por parte dos usuários;
-- perfil do usuário com informações e histórico de atividades;
-- painel administrativo para gestão de livros e usuários;
-- controle de permissões para administradores;
-- armazenamento local com JSON e LocalStorage para simular banco de dados em ambiente de prototipação;
-- integração inicial com APIs locais para manipulação de dados;
-- suporte a autenticação por carteira digital, como MetaMask e Phantom, em uma camada inicial de integração.
+   ```powershell
+   git clone https://github.com/Vnzada22/book-hub-hackathonglobal.git
+   cd book-hub-hackathonglobal
+   ```
 
-## 🏗️ Estrutura do projeto
+2. Instale as dependências:
 
-O repositório está organizado em páginas e módulos principais:
+   ```powershell
+   npm install
+   ```
 
-- login: autenticação e sessão do usuário;
-- pagina-inicial: catálogo e acesso ao acervo;
-- perfil: dados pessoais e histórico do aluno;
-- parte-de-administrador: gerenciamento de livros, admins e reservas;
-- banco-de-dados: arquivos JSON e servidor local para leitura e gravação de informações;
-- adequacao.md: documento com análise do projeto em relação a regulamento, blockchain e competitividade.
+3. Crie seu arquivo local de ambiente a partir do exemplo:
 
-## 🚀 Funcionalidades principais
+   ```powershell
+   Copy-Item .env.example .env
+   ```
 
-### 1. Catálogo de livros
-O usuário pode visualizar os livros disponíveis no acervo, com informações como título, autor, capa e descrição. A interface foi estruturada para facilitar a navegação e a busca por itens do catálogo.
+4. Edite `.env` e informe pelo menos uma URL de conexão PostgreSQL válida em `DATABASE_URL`. Configure também os serviços que pretende usar conforme a seção seguinte. **Nunca publique o `.env` nem coloque credenciais reais no README ou em outros arquivos versionados.**
 
-### 2. Reservas
-O sistema permite que alunos realizem reservas de livros. As reservas passam por um fluxo que pode ser acompanhado pelo painel administrativo, com informações de status e controle da solicitação.
+5. Inicie o servidor:
 
-### 3. Perfil do usuário
-A área de perfil mostra informações do estudante ou usuário, além de registrar histórico de movimentações e atividades relacionadas ao uso da biblioteca.
+   ```powershell
+   npm start
+   ```
 
-### 4. Painel administrativo
-O administrador pode:
+6. Acesse `http://localhost:3000`.
 
-- cadastrar novos livros;
-- editar ou remover registros do acervo;
-- visualizar e controlar reservas;
-- promover usuários para administração;
-- manter uma visão mais ampla do funcionamento da biblioteca.
+O servidor disponibiliza a interface e a API e prepara/verifica tabelas do sistema na inicialização. Os scripts em `supabase/migrations/` documentam alterações de esquema. Revise-os e aplique-os ao banco na ordem cronológica antes de implantar ou atualizar um banco existente; faça backup antes de alterações em produção.
 
-Na busca de vários livros, o servidor consulta Google Books, Open Library, Wikipedia/Wikidata e Internet Archive, tenta títulos alternativos conhecidos/traduzidos e combina os campos encontrados entre as fontes. Resumos são apresentados em português do Brasil; se a descrição encontrada for apenas o título ou não puder ser traduzida com segurança, o campo fica vazio para revisão manual. Nomes de autores com escrita não latina e valores de editora que parecem ser notas de tradução são descartados para evitar atribuições falsas; podem ser preenchidos manualmente na ficha. A ficha apresenta as fontes consultadas e links quando disponíveis. Os resultados aparecem como fichas editáveis e **não são salvos até o administrador confirmar cada livro**. Dados que não foram encontrados ficam em branco para revisão manual, sem serem inventados.
+## Variáveis de ambiente e integrações
 
-### 5. Sessão e autenticação
-O projeto já implementa uma lógica de sessão para manter o usuário logado na aplicação e controlar o acesso às áreas restritas, como o painel administrativo.
+As variáveis e os nomes dos callbacks estão listados em [`.env.example`](./.env.example).
 
-O login também oferece código de verificação por e-mail, Google OAuth, X OAuth 2.0 com PKCE e assinatura de carteira MetaMask. Para ativar esses serviços, configure no `.env` as variáveis correspondentes do `.env.example`:
+| Variável | Necessária para | Observação |
+| --- | --- | --- |
+| `DATABASE_URL` | Banco de dados | URL de conexão PostgreSQL. Necessária para persistir e consultar os dados da aplicação. |
+| `PORT` | Servidor | Porta HTTP; padrão `3000`. |
+| `AUTH_TOKEN_SECRET` | Autenticação por e-mail e sessões/token | Use um segredo longo e aleatório, exclusivo para o ambiente. |
+| `RESEND_API_KEY` | Envio de códigos por e-mail | Chave da conta Resend. |
+| `AUTH_EMAIL_FROM` | Envio de códigos por e-mail | Remetente aceito/configurado no Resend. |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google OAuth | Registre o callback `/api/auth/google/callback` no provedor. |
+| `X_CLIENT_ID`, `X_CLIENT_SECRET` | X OAuth 2.0 | Registre o callback `/api/auth/x/callback` no provedor. |
+| `AUTH_BASE_URL` | Callbacks OAuth | URL base pública da aplicação; em desenvolvimento, `http://localhost:3000`. |
+| `GOOGLE_REDIRECT_URI`, `X_REDIRECT_URI` | Callbacks OAuth personalizados | Opcionais; use apenas se os callbacks diferirem dos padrões. |
+| `GEMINI_API_KEY` | Assistência de dados de livros | Opcional; sem ela, a aplicação ainda pode consultar os catálogos externos configurados no servidor. |
 
-- `RESEND_API_KEY`, `AUTH_EMAIL_FROM` e um `AUTH_TOKEN_SECRET` aleatório e longo para envio/validação segura dos códigos por e-mail (Resend);
-- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` e, em produção, `AUTH_BASE_URL` para Google OAuth;
-- `X_CLIENT_ID`, `X_CLIENT_SECRET` e, em produção, `AUTH_BASE_URL` para X OAuth.
+Para autenticação por e-mail, configure Resend e os três valores `RESEND_API_KEY`, `AUTH_EMAIL_FROM` e `AUTH_TOKEN_SECRET`. Para Google ou X, configure as credenciais do provedor, a URL base e os callbacks correspondentes. A autenticação X também solicita verificação do e-mail informado pelo usuário. A MetaMask não usa variável de ambiente: é necessária uma carteira compatível no navegador.
 
-Cadastre os endereços de callback na configuração de cada provedor: `/api/auth/google/callback` e `/api/auth/x/callback`. O endereço público configurado em `AUTH_BASE_URL` precisa corresponder ao domínio do site. As tabelas de verificação e de associação das contas OAuth são criadas pelo servidor no banco PostgreSQL durante a inicialização.
+## Reservas e ranking
 
-Ao entrar pelo X, o usuário também informa um e-mail e confirma um código de 6 dígitos enviado para esse endereço antes de acessar a conta ou concluir o cadastro. A associação da identidade X só é gravada após essa confirmação. A tabela auxiliar desse fluxo também está definida em `supabase/migrations/20261023001000_require_verified_email_for_x.sql`.
+As reservas são solicitações para retirada física, não empréstimos nem leitura digital dentro do site. O status pode ser acompanhado e atualizado pela administração.
 
-Os métodos confirmados são registrados em `public.auth_identities`, associados ao usuário e identificados por `method` (`email`, `google`, `x` ou `metamask`) e `provider_user_id`. A tabela mantém os horários da verificação e do último login. A inicialização copia para ela os e-mails, contas OAuth e carteiras já existentes sem remover as colunas/tabelas legadas.
+O ranking é organizado por temporadas mensais. Cada livro diferente pré-reservado por um usuário pode gerar 1 ponto por temporada; a restrição no banco evita pontuar novamente a mesma origem do evento. Ao fechar uma temporada, os resultados são persistidos e o servidor calcula um hash SHA-256 em estrutura Merkle dos resultados.
 
-Depois de uma autenticação verificada, o servidor também mantém uma sessão opaca em cookie `HttpOnly` (`public.auth_sessions`). As operações de reserva e de perfil usam essa sessão em vez de confiar no identificador enviado pelo navegador.
+**Não há integração on-chain operacional neste momento.** O hash da temporada fica no PostgreSQL. Não há contrato inteligente, transação blockchain, NFT ou SBT sendo emitido. A tabela `blockchain_ranking_events` é apenas uma estrutura de preparação.
 
-### Ranking por temporadas e comprovação futura
+## Observações e limitações
 
-O ranking usa temporadas mensais e mantém as pontuações fora da blockchain, no PostgreSQL/Supabase. A primeira temporada começa sem importar os saldos antigos de `ranking_leitores`; esses dados legados não são apagados, mas não contam para a nova classificação. No momento, cada livro diferente reservado pelo mesmo usuário vale **1 ponto por temporada**. Novas tentativas do mesmo livro não geram pontos repetidos. Resumos ainda não pontuam: quando a funcionalidade de resenhas for criada, a regra prevista é **3 pontos por resumo aprovado**, com um evento único por resumo.
-
-Reservas e eventos de pontuação ficam persistidos em `bookhub_reservations` e `ranking_point_events`. Ao encerrar o mês, os resultados são congelados em `ranking_season_results`; as posições Top 1, Top 2 e Top 3 ficam visíveis no perfil como tags históricas. A tela de ranking permite consultar a temporada atual e as anteriores.
-
-No fechamento de cada temporada, o servidor calcula um resumo SHA-256 em estrutura Merkle dos resultados e o guarda em `ranking_seasons.results_hash`. Esse digest permite preparar uma verificação futura, mas **ainda não é publicado on-chain**: não há RPC, contrato, transação nem NFT/SBT implementado. O hash usa identificadores internos e posições/pontos, não nomes, e-mail ou histórico pessoal. A publicação em rede só deve ser adicionada após definir rede, política de confirmação e tratamento de reorganizações.
-
-A migração `supabase/migrations/20261022231000_add_monthly_ranking_seasons.sql` cria as tabelas de sessão, temporada, eventos de pontos, resultados e reservas persistentes. O servidor também garante essas tabelas na inicialização. Revise e aplique a migração no projeto Supabase antes de implantar, especialmente em produção; faça backup do banco antes de qualquer alteração de esquema.
-
-A estrutura anterior `ranking_leitores.pontos_onchain` e `blockchain_ranking_events`, criada pela migração `supabase/migrations/20261022220000_add_auth_identities_and_blockchain_ranking.sql`, permanece como preparação separada e não altera o cálculo do ranking sazonal.
-
-## 🛠️ Tecnologias e abordagem atual
-
-O projeto hoje usa uma abordagem simples e didática para simular uma aplicação web real, com:
-
-- HTML e CSS para interface;
-- JavaScript para lógica da aplicação;
-- Node.js como servidor local para API;
-- arquivos JSON como base de dados inicial;
-- LocalStorage para persistência no navegador.
-
-Essa arquitetura é ideal para um protótipo funcional e para demonstração de fluxo de uso, mas ainda é um estado inicial em termos de escalabilidade e segurança.
-
-## 🔧 O que já foi mexido
-
-Ao longo do desenvolvimento, já foi trabalhado o núcleo da experiência do usuário e da gestão da biblioteca, incluindo:
-
-- organização da interface do sistema;
-- navegação entre páginas principais;
-- fluxo de login e sessão;
-- catálogo de livros;
-- mecanismo de reservas;
-- administração do acervo;
-- controle de usuários e perfil de admin;
-- estrutura de dados para simular banco e API local.
-
-Em outras palavras, o projeto já saiu do estágio conceitual e chegou a um MVP funcional com base sólida para continuar evoluindo.
-
-## 🌱 O que ainda será mexido / roadmap
-
-A parte futura do BookHub ainda é bastante promissora e inclui melhorias importantes em vários níveis.
-
-### Melhorias de experiência
-- refinamento visual da interface;
-- melhor organização das telas mobile e desktop;
-- mensagens de feedback mais completas para o usuário;
-- filtros e busca mais avançados no catálogo;
-- notificações mais claras sobre reservas, atrasos e status.
-
-### Melhorias de backend e dados
-- migração de JSON/LocalStorage para banco de dados real;
-- autenticação mais segura com senha e controle de sessão robusto;
-- gerenciamento de permissões por perfil com regras mais precisas;
-- logs de auditoria para ações administrativas;
-- histórico mais detalhado de empréstimos e devoluções.
-
-### Melhorias de segurança e governança
-- uso de HTTPS e políticas de segurança;
-- validação mais rígida de dados de entrada;
-- controle de acesso mais forte para administradores;
-- rastreabilidade de ações do sistema.
-
-### Evolução tecnológica
-- integração com blockchain ou soluções de rastreabilidade;
-- uso de hashes para validar integridade de registros críticos;
-- suporte a autenticação digital e identidade institucional;
-- expansão para múltiplas escolas, bibliotecas ou unidades.
-
-### Diferenciação e crescimento
-- gamificação para incentivar a leitura;
-- certificados e recompensas;
-- relatórios de leitura e engajamento;
-- expansão do produto para uma solução comercial ou institucional.
-
-## 📊 Status atual
-
-O projeto está em etapa de desenvolvimento funcional, com base de MVP já estruturada e pronta para continuar evoluindo. Ele já demonstra o fluxo principal de uma biblioteca digital, mas ainda precisa de aprimoramentos em arquitetura, segurança, escalabilidade e diferenciação de mercado.
-
-## 🎯 Objetivo futuro
-
-O objetivo é transformar o BookHub em uma plataforma mais robusta, confiável e competitiva, capaz de atender não apenas a gestão básica de livros, mas também a necessidades de instituições educacionais, controle de acervo, governança e engajamento de leitura.
-
-## ▶️ Como rodar o projeto
-
-1. Abra o terminal na pasta do projeto.
-2. Acesse a pasta do servidor local:
-   - trabalho-inicial/trabalho teste/parte-de-administrador/banco-de-dados
-3. Inicie o servidor Node.js:
-   - node server.js
-4. Abra a página principal do projeto em um navegador.
-5. Faça login e utilize as áreas de catálogo, perfil e administração.
-
-> Importante: o projeto ainda depende de um ambiente local para simular dados e APIs, e por isso a execução em conjunto com o servidor local é parte da experiência atual.
-
-## 🧩 Conclusão
-
-O BookHub já apresenta uma base sólida como sistema de gestão de biblioteca escolar, com fluxo principal funcional e boa estrutura para expansão. O que já foi construído mostra a ideia central do projeto, e o que ainda será implementado aponta para uma evolução natural em direção a um produto mais completo, seguro, escalável e preparado para uso institucional.
-
-O projeto tem potencial para crescer de uma ferramenta acadêmica para uma solução moderna de biblioteca digital, com maior controle administrativo, melhor experiência de usuário e novas camadas de tecnologia e inovação.
+- A disponibilidade apresentada depende dos dados mantidos no catálogo e deve ser confirmada pela biblioteca.
+- Catálogos externos podem impor limites, ficar indisponíveis ou retornar metadados incompletos. A busca assistida não garante o preenchimento de todos os campos; revise cada resultado.
+- Google OAuth, X OAuth, Resend e Gemini exigem credenciais próprias e configuração no provedor.
+- Use HTTPS, segredos seguros e backups apropriados ao disponibilizar a aplicação em produção. Configure as origens e callbacks para o domínio público utilizado.
+- O projeto não oferece leitura de livros online nem substitui o processo físico de empréstimo da biblioteca.
