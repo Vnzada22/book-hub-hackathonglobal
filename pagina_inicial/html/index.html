@@ -6,14 +6,14 @@
     <title>BookHub — Catálogo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body>
     <header class="netflix-header">
       <div class="nav-left">
-        <a href="/" style="text-decoration: none;">
-          <h1 class="netflix-logo" style="cursor: pointer; color: var(--net-red, #e50914); margin: 0;">BOOKHUB</h1>
+        <a href="/" class="brand-logo" aria-label="BookHub — página inicial">
+          <img src="/assets/bookhub-anime-logo.png" alt="BookHub">
         </a>
         <nav class="nav-links">
           <a href="#" class="nav-pill active">Início</a>
@@ -54,27 +54,87 @@
 
     <section class="netflix-hero">
       <div class="hero-info">
-        <span class="hero-badge">CONSULTE O ACERVO E RESERVE SEU LIVRO</span>
-        <h2>Encontre seu próximo<br><em>livro na biblioteca.</em></h2>
-        <p>Confira os títulos disponíveis na sua biblioteca, acompanhe a disponibilidade em tempo real e faça a pré-reserva do seu exemplar sem sair de casa.</p>
-        <a class="hero-cta" href="#mainContentRows">Ver livros disponíveis <span aria-hidden="true">↓</span></a>
+        <span class="hero-badge">— SEU ACERVO A UM CLIQUE</span>
+        <h2>Encontre a sua<br>próxima<br><em>grande leitura.</em></h2>
+        <p>Explore o acervo em tempo real, descubra suas próximas leituras e garanta a pré-reserva do seu exemplar sem sair de casa.</p>
+        <a class="hero-cta" href="#mainContentRows">
+          Ver livros disponíveis
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF2A55" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300 group-hover:translate-y-1" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+          </svg>
+        </a>
       </div>
-      <div class="hero-art" aria-hidden="true">
-        <div class="hero-art-grid"></div>
-        <div class="hero-book hero-book-back"><span>UMA VIDA<br>ENTRE LIVROS</span><i>BOOKHUB EDITIONS</i></div>
-        <div class="hero-book hero-book-middle"><span>O PRÓXIMO<br>CAPÍTULO</span><i>LEITURAS • 2026</i></div>
-        <div class="hero-book hero-book-front"><span>GARANTA<br>SUA<br>RESERVA</span><i>BOOKHUB</i></div>
-        <span class="hero-art-note">01 — ACERVO &amp; RESERVAS</span>
+      <div class="hero-art" role="group" aria-label="Como funciona o BookHub">
+        <div class="hero-art-glow" aria-hidden="true"></div>
+        <svg class="hero-art-arcs" viewBox="0 0 700 560" preserveAspectRatio="none" aria-hidden="true">
+          <path class="hero-arc hero-arc-gold" d="M108 535V306C108 177 211 75 350 75s242 102 242 231v229" />
+          <path class="hero-arc hero-arc-gold" d="M168 535V317C168 213 243 130 350 130s182 83 182 187v218" />
+          <path class="hero-arc hero-arc-red" d="M48 535V296C48 145 180 30 350 30s302 115 302 266v239" />
+          <path class="hero-arc hero-arc-shelf" d="M0 558 350 397 700 558M148 558 350 435 552 558" />
+        </svg>
+        <span class="hero-art-particle hero-art-particle-one" aria-hidden="true"></span>
+        <span class="hero-art-particle hero-art-particle-two" aria-hidden="true"></span>
+        <span class="hero-art-particle hero-art-particle-three" aria-hidden="true"></span>
+        <span class="hero-art-particle hero-art-particle-four" aria-hidden="true"></span>
+        <div class="hero-book hero-book-back">
+          <div class="hero-book-step-copy">
+            <span class="hero-book-step-number">PASSO 01</span>
+            <h3 class="hero-book-step-title">Descubra</h3>
+            <p class="hero-book-step-description">Encontre seu próximo livro no acervo.</p>
+          </div>
+        </div>
+        <div class="hero-book hero-book-middle">
+          <div class="hero-book-step-copy">
+            <span class="hero-book-step-number">PASSO 02</span>
+            <h3 class="hero-book-step-title">Reserve</h3>
+            <p class="hero-book-step-description">Solicite seu exemplar em poucos cliques.</p>
+          </div>
+        </div>
+        <div class="hero-book hero-book-front">
+          <div class="hero-book-step-copy">
+            <span class="hero-book-step-number">PASSO 03</span>
+            <h3 class="hero-book-front-title">Leia mais.<br>Retire aqui.</h3>
+            <p class="hero-book-step-description">Seu próximo capítulo começa na biblioteca.</p>
+          </div>
+          <span class="hero-book-front-brand">BOOKHUB</span>
+        </div>
+        <span class="hero-art-note" aria-hidden="true">01 — ACERVO &amp; RESERVAS</span>
       </div>
+      <div class="hero-bottom-fade" aria-hidden="true"></div>
     </section>
 
     <main class="netflix-main">
+      <section class="project-highlights" aria-label="Espaços para destaques do BookHub">
+        <article class="project-highlight-empty project-highlight-empty-one">
+          <div class="project-highlight-card-copy">
+            <span class="project-highlight-card-eyebrow">UM ACERVO PARA DESCOBRIR</span>
+            <h2>Histórias para todos os momentos.</h2>
+            <a href="#mainContentRows">Explore os livros <span aria-hidden="true">→</span></a>
+          </div>
+          <svg class="project-highlight-card-icon" viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M7 9h12a5 5 0 0 1 5 5v26a5 5 0 0 0-5-5H7z"></path>
+            <path d="M41 9H29a5 5 0 0 0-5 5v26a5 5 0 0 1 5-5h12z"></path>
+          </svg>
+        </article>
+        <article class="project-highlight-empty project-highlight-empty-two">
+          <div class="project-highlight-card-copy">
+            <span class="project-highlight-card-eyebrow">SUA PRÓXIMA LEITURA</span>
+            <h2>Escolha. Reserve. Retire.</h2>
+            <a href="#mainContentRows">Encontre seu livro <span aria-hidden="true">→</span></a>
+          </div>
+          <svg class="project-highlight-card-icon" viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M24 40S7 30 7 18a9 9 0 0 1 17-4 9 9 0 0 1 17 4c0 12-17 22-17 22z"></path>
+            <path d="M14 24h7l4-8 5 15 4-7h5"></path>
+          </svg>
+        </article>
+      </section>
       <div id="mainContentRows" aria-live="polite" aria-busy="true"></div>
       <div id="searchResults" class="books-grid" style="display: none;"></div>
     </main>
 
     <footer class="netflix-footer">
-      <p>BookHub — Plataforma de Estética Cinematográfica.</p>
+      <p>BookHub — Seu próximo capítulo começa aqui.</p>
     </footer>
 
     <script src="/java/client.js"></script>

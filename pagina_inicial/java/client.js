@@ -12,6 +12,62 @@ let minhaListaLivros = [];
 let categoriaAtiva = 'todos';
 let activeBookFocus = null;
 
+const heroSection = document.querySelector('.netflix-hero');
+const heroArt = heroSection?.querySelector('.hero-art');
+const heroPointerEnabled = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (heroSection && heroArt && heroPointerEnabled) {
+  let pointerFrame = null;
+  let pendingPointer = null;
+  const clampPointer = value => Math.max(-1, Math.min(1, value));
+
+  const resetHeroPointer = () => {
+    if (pointerFrame !== null) {
+      cancelAnimationFrame(pointerFrame);
+      pointerFrame = null;
+    }
+    pendingPointer = null;
+    heroSection.classList.remove('is-book-focused');
+    heroArt.style.setProperty('--arc-offset-x', '0px');
+    heroArt.style.setProperty('--arc-offset-y', '0px');
+    heroArt.style.setProperty('--glow-offset-x', '0px');
+    heroArt.style.setProperty('--glow-offset-y', '0px');
+  };
+
+  heroSection.addEventListener('mousemove', event => {
+    pendingPointer = {
+      arcX: `${-clampPointer((event.clientX / window.innerWidth - 0.5) * 2) * 15}px`,
+      arcY: `${-clampPointer((event.clientY / window.innerHeight - 0.5) * 2) * 15}px`,
+      glowX: `${-clampPointer((event.clientX / window.innerWidth - 0.5) * 2) * 5}px`,
+      glowY: `${-clampPointer((event.clientY / window.innerHeight - 0.5) * 2) * 5}px`
+    };
+    if (pointerFrame !== null) return;
+    pointerFrame = requestAnimationFrame(() => {
+      pointerFrame = null;
+      if (!pendingPointer) return;
+
+      heroArt.style.setProperty('--arc-offset-x', pendingPointer.arcX);
+      heroArt.style.setProperty('--arc-offset-y', pendingPointer.arcY);
+      heroArt.style.setProperty('--glow-offset-x', pendingPointer.glowX);
+      heroArt.style.setProperty('--glow-offset-y', pendingPointer.glowY);
+    });
+  });
+
+  heroSection.addEventListener('mouseleave', resetHeroPointer);
+  heroArt.addEventListener('mouseover', event => {
+    if (event.target.closest('.hero-book')) {
+      heroSection.classList.add('is-book-focused');
+    }
+  });
+  heroArt.addEventListener('mouseout', event => {
+    if (!event.target.closest('.hero-book')) return;
+    if (!event.relatedTarget?.closest?.('.hero-book')) {
+      heroSection.classList.remove('is-book-focused');
+    }
+  });
+}
+
 function posicionarResumoEmFoco(card, resumo) {
   const margem = 16;
   const intervalo = 18;
