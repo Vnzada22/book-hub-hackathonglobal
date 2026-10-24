@@ -351,8 +351,9 @@ function formatarTituloLivro(valor) {
 
 function normalizarCategoria(valor) {
   const genero = String(valor || '').trim();
-  if (!genero) return 'Geral';
+  if (!genero) return '';
   const chave = genero.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
+  if (/^(general|geral|unknown|uncategorized|uncategorised|not specified|sem categoria)$/.test(chave)) return '';
   const categorias = [
     [/school|escolar|school stories/, 'Escolar'],
     [/fantas|fantasy/, 'Fantasia'],
@@ -369,15 +370,15 @@ function normalizarCategoria(valor) {
     [/children|infantil|juvenile|young adult/, 'Infantil'],
     [/fiction|ficcao/, 'Ficção']
   ];
-  return categorias.find(([padrao]) => padrao.test(chave))?.[1] || 'Geral';
+  return categorias.find(([padrao]) => padrao.test(chave))?.[1] || '';
 }
 
 function obterGenerosLivro(livro) {
   const genero = String(livro.genero || '').trim();
-  if (!genero) return ['Geral'];
+  if (!genero) return [];
   const categorias = genero.split(/[,;|/]+/).map(normalizarCategoria);
   const unicas = [...new Set(categorias.filter(Boolean))];
-  const especificas = unicas.filter(categoria => categoria !== 'Ficção' && categoria !== 'Geral');
+  const especificas = unicas.filter(categoria => categoria !== 'Ficção');
   return especificas.length ? especificas : unicas;
 }
 
@@ -397,7 +398,7 @@ function criarCartaoLivro(b) {
 
   const primeiraPalavra = tituloLivro.split(/\s+/)[0] || 'Livro';
   const generos = obterGenerosLivro(b);
-  const generoTexto = generos[0];
+  const generoTexto = generos[0] || '';
   const disponivel = b.disponivel !== false;
   const statusBadge = disponivel
     ? '<div class="book-status badge-disponivel"><span class="book-status-dot" aria-hidden="true"></span>Disponível</div>'
@@ -412,7 +413,7 @@ function criarCartaoLivro(b) {
       ${statusBadge}
     </div>
     <div class="book-details">
-      <span class="book-genre" title="${escaparHTML(generoTexto)}">${escaparHTML(generoTexto)}</span>
+      ${generoTexto ? `<span class="book-genre" title="${escaparHTML(generoTexto)}">${escaparHTML(generoTexto)}</span>` : ''}
       <h4 class="book-title" title="${escaparHTML(tituloLivro)}">${escaparHTML(tituloLivro)}</h4>
       <p class="book-author" title="${escaparHTML(autorLivro)}">${escaparHTML(autorLivro)}</p>
     </div>
@@ -452,7 +453,9 @@ function criarCartaoLivro(b) {
 
   const generosDetalhe = document.createElement('p');
   generosDetalhe.className = 'book-summary-categories';
-  generosDetalhe.textContent = `Categorias: ${generos.join(', ')}`;
+  generosDetalhe.textContent = generos.length
+    ? `Categorias: ${generos.join(', ')}`
+    : 'Categoria não informada';
 
   const textoResumo = document.createElement('p');
   textoResumo.className = 'book-summary-text';
@@ -548,7 +551,7 @@ function criarCarrossel(titulo, listaLivros) {
 }
 
 function obterGeneroLivro(livro) {
-  return obterGenerosLivro(livro)[0] || 'Geral';
+  return obterGenerosLivro(livro)[0] || '';
 }
 
 function renderRowsInterface() {
@@ -574,7 +577,6 @@ function renderRowsInterface() {
   )).values()];
 
   generos.forEach(genero => {
-    if (genero.toLocaleLowerCase('pt-BR') === 'geral') return;
     const livrosDaCategoria = books.filter(livro =>
       obterGenerosLivro(livro).some(categoria => categoria.toLocaleLowerCase('pt-BR') === genero.toLocaleLowerCase('pt-BR'))
     );
@@ -648,7 +650,7 @@ async function fazerPreReserva(idLivro, tituloLivro) {
 function atualizarFiltrosCategorias(listaLivros) {
   const generosUnicos = [...new Map(listaLivros.flatMap(livro =>
     obterGenerosLivro(livro).map(genero => [genero.toLocaleLowerCase('pt-BR'), genero])
-  )).values()].filter(genero => genero.toLocaleLowerCase('pt-BR') !== 'geral');
+  )).values()];
   const generos = ['todos', ...generosUnicos];
 
   if (!filterChipsContainer) return;

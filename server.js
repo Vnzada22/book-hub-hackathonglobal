@@ -34,7 +34,14 @@ if (db) {
   // Teste imediato de conexão ao iniciar o servidor
   db.query('SELECT now()')
     .then(res => console.log('✅ CONEXÃO ESTABELECIDA COM SUPABASE! Hora do servidor:', res.rows[0].now))
-    .catch(err => console.error('❌ FALHA NA CONEXÃO INICIAL COM SUPABASE:', err.message));
+    .catch(err => {
+      if (err.code === 'ENETUNREACH') {
+        console.error(
+          'A rede atual não tem rota até o endereço do banco. Se o DATABASE_URL usa o endpoint direto do Supabase, habilite IPv6 ou use a URL do Session Pooler compatível com IPv4.'
+        );
+      }
+      console.error('❌ FALHA NA CONEXÃO INICIAL COM SUPABASE:', err.message);
+    });
 } else {
   console.error('⚠️ DATABASE_URL não encontrada no .env!');
 }

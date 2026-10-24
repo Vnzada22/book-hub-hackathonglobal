@@ -91,6 +91,12 @@ Os dados do catálogo, usuários, reservas, autenticação e ranking são armaze
 
 O servidor disponibiliza a interface e a API e prepara/verifica tabelas do sistema na inicialização. Os scripts em `supabase/migrations/` documentam alterações de esquema. Revise-os e aplique-os ao banco na ordem cronológica antes de implantar ou atualizar um banco existente; faça backup antes de alterações em produção.
 
+### Erros de conexão com o Supabase
+
+O endpoint direto de banco do Supabase pode resolver para um endereço IPv6. Se a rede da máquina não oferecer rota IPv6 e o servidor reportar `ENETUNREACH`, a interface ainda pode abrir, mas as funções que dependem do banco não funcionarão.
+
+Para resolver, habilite IPv6 na rede ou, no painel do Supabase, copie a URL de conexão do **Session Pooler** compatível com IPv4 e substitua o valor de `DATABASE_URL` no `.env`. Use a URL completa fornecida pelo painel, sem publicar a senha. Não é necessário instalar a CLI do Supabase ou iniciar Docker para conectar a um projeto Supabase hospedado; esses recursos só são necessários para executar a stack local do Supabase.
+
 ## Variáveis de ambiente e integrações
 
 As variáveis e os nomes dos callbacks estão listados em [`.env.example`](./.env.example).

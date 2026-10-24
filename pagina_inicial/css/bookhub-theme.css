@@ -1,0 +1,492 @@
+:root {
+  color-scheme: light;
+  --bh-page: #f4f6fb;
+  --bh-surface: #ffffff;
+  --bh-surface-muted: #f8f9fc;
+  --bh-text: #1c2940;
+  --bh-muted: #66748a;
+  --bh-border: #dfe5ef;
+  --bh-header: #123d7a;
+  --bh-accent: #e43f73;
+  --bh-accent-hover: #c92d61;
+  --bh-shadow: 0 14px 38px rgba(24, 45, 82, 0.1);
+  --bookhub-bg: var(--bh-page);
+  --bookhub-surface: var(--bh-surface);
+  --bookhub-surface-raised: var(--bh-surface-muted);
+  --bookhub-text: var(--bh-text);
+  --bookhub-muted: var(--bh-muted);
+  --bookhub-border: var(--bh-border);
+  --bookhub-shadow: var(--bh-shadow);
+  --net-bg: var(--bh-page);
+  --net-surface: var(--bh-surface);
+  --net-dark: var(--bh-page);
+  --net-dark-card: var(--bh-surface);
+  --net-gray-border: var(--bh-border);
+  --net-text-gray: var(--bh-muted);
+  --net-gray-light: var(--bh-muted);
+  --bg-color: var(--bh-page);
+  --text-main: var(--bh-text);
+  --text-light: var(--bh-muted);
+  --border-color: var(--bh-border);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bh-page: #101522;
+  --bh-surface: #192235;
+  --bh-surface-muted: #202b40;
+  --bh-text: #edf2fb;
+  --bh-muted: #a8b4c8;
+  --bh-border: #344158;
+  --bh-header: #0d1423;
+  --bh-accent: #ff648f;
+  --bh-accent-hover: #ff83a5;
+  --bh-shadow: 0 16px 42px rgba(0, 0, 0, 0.28);
+}
+
+html {
+  background: var(--bh-page);
+  color-scheme: inherit;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bh-page) !important;
+  color: var(--bh-text) !important;
+  transition: background-color 220ms ease, color 220ms ease;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: var(--bookhub-font-ui, 'Inter', 'Segoe UI', Arial, sans-serif);
+}
+
+.netflix-header,
+.login-header {
+  background: var(--bh-header) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 0 6px 24px rgba(13, 30, 58, 0.12);
+}
+
+.login-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.netflix-header a,
+.netflix-header .netflix-logo,
+.login-header .site-logo {
+  color: #fff !important;
+}
+
+.netflix-header .brand-logo,
+.netflix-header .site-logo,
+.netflix-header .netflix-logo,
+.login-header .site-logo {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  line-height: 0;
+}
+
+.netflix-header .brand-logo img,
+.netflix-header .site-logo img,
+.netflix-header .netflix-logo img,
+.login-header .site-logo img {
+  display: block;
+  width: clamp(140px, 16vw, 190px);
+  max-width: 100%;
+  max-height: 66px;
+  object-fit: contain;
+}
+
+.netflix-header nav a {
+  color: rgba(255, 255, 255, 0.78) !important;
+}
+
+.netflix-header nav a:hover,
+.netflix-header nav a.ativo,
+.netflix-header nav a.active {
+  color: #fff !important;
+}
+
+.bookhub-theme-toggle {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.27);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 180ms ease, transform 180ms ease, border-color 180ms ease;
+}
+
+.bookhub-theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.bookhub-theme-toggle:focus-visible {
+  outline: 2px solid #ffca70;
+  outline-offset: 3px;
+}
+
+.theme-icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+:root[data-theme="dark"] .theme-icon-moon,
+:root:not([data-theme="dark"]) .theme-icon-sun {
+  display: none;
+}
+
+.netflix-login-bg {
+  background:
+    radial-gradient(ellipse at 85% 18%, rgba(255, 130, 114, 0.18), transparent 34%),
+    radial-gradient(ellipse at 14% 88%, rgba(91, 141, 230, 0.15), transparent 34%),
+    var(--bh-page) !important;
+}
+
+.vignette-overlay {
+  display: none !important;
+}
+
+.login-box,
+.admin-card,
+.catalog-search-card,
+.multi-ia-box,
+.table-container,
+.ranking-table-card,
+.podium-card,
+.card-painel,
+.modal-content,
+.categories-section,
+.profile-dropdown,
+.book-modal-content {
+  color: var(--bh-text) !important;
+  background: var(--bh-surface) !important;
+  border-color: var(--bh-border) !important;
+  box-shadow: var(--bh-shadow) !important;
+}
+
+.login-box,
+.admin-card,
+.table-container,
+.ranking-table-card,
+.card-painel {
+  border-radius: 18px;
+}
+
+.login-box h1,
+.login-box h2,
+.admin-card h2,
+.admin-card h3,
+.card-painel h3,
+.ranking-table-card h3,
+.ranking-header-title h1,
+.conta-container,
+.conta-container h2,
+.conta-container h3,
+.row-title {
+  color: var(--bh-text) !important;
+}
+
+.login-subtitle,
+.ranking-header-title p,
+.podium-score,
+.ranking-proof,
+.input-group label,
+.field-label,
+.category-filter-label {
+  color: var(--bh-muted) !important;
+}
+
+.auth-input,
+.input-group input,
+.input-group textarea,
+.input-group select,
+input,
+textarea,
+select,
+#search,
+#seasonSelector {
+  color: var(--bh-text) !important;
+  background: var(--bh-surface-muted) !important;
+  border-color: var(--bh-border) !important;
+}
+
+.auth-input::placeholder,
+.input-group input::placeholder,
+.input-group textarea::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--bh-muted) !important;
+  opacity: 0.8;
+}
+
+.auth-input:focus,
+.input-group input:focus,
+.input-group textarea:focus,
+.input-group select:focus,
+#search:focus,
+#seasonSelector:focus {
+  border-color: var(--bh-accent) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--bh-accent) 18%, transparent);
+}
+
+.btn-primary,
+.btn-salvar,
+.btn-salvar-edicao,
+.btn-admin {
+  background: linear-gradient(120deg, var(--bh-accent), #f28262) !important;
+  border-color: transparent !important;
+}
+
+.btn-primary:hover,
+.btn-salvar:hover,
+.btn-salvar-edicao:hover,
+.btn-admin:hover {
+  filter: brightness(1.05);
+}
+
+.menu-item {
+  color: var(--bh-muted) !important;
+  border-radius: 10px;
+}
+
+.menu-item:hover,
+.menu-item.ativo {
+  color: var(--bh-text) !important;
+  background: var(--bh-surface-muted) !important;
+}
+
+.info-linha,
+.tabela-historico th,
+.tabela-historico td,
+.ranking-table th,
+.ranking-table td,
+#tabelaLivros th,
+#tabelaLivros td,
+#tabelaReservas th,
+#tabelaReservas td {
+  color: var(--bh-text);
+  border-color: var(--bh-border) !important;
+}
+
+.tabela-historico th,
+.ranking-table th,
+#tabelaLivros th,
+#tabelaReservas th {
+  color: var(--bh-muted) !important;
+  background: var(--bh-surface-muted);
+}
+
+.ranking-table tr:hover,
+#tabelaLivros tbody tr:hover,
+#tabelaReservas tbody tr:hover {
+  background: color-mix(in srgb, var(--bh-accent) 7%, var(--bh-surface));
+}
+
+.podium-name,
+.valor,
+.label,
+.book-title,
+.book-author,
+.book-summary-text,
+.dropdown-header,
+.profile-dropdown a {
+  color: var(--bh-text);
+}
+
+.netflix-footer {
+  color: var(--bh-muted);
+}
+
+.book-card {
+  color: var(--bh-text);
+  background: var(--bh-surface);
+  border-color: var(--bh-border);
+  box-shadow: var(--bh-shadow);
+}
+
+.book-card:hover,
+.book-card:focus-within {
+  box-shadow: 0 18px 38px rgba(24, 45, 82, 0.18);
+}
+
+.book-cover {
+  background: var(--bh-surface-muted);
+}
+
+.book-genre {
+  color: var(--bh-muted);
+  background: var(--bh-surface-muted);
+  border-color: var(--bh-border);
+}
+
+.catalog-empty-state,
+.catalog-loading {
+  color: var(--bh-muted);
+}
+
+.categories-section {
+  color: var(--bh-text);
+}
+
+.chip {
+  color: var(--bh-text);
+  background: var(--bh-surface-muted);
+  border-color: var(--bh-border);
+}
+
+.chip:hover {
+  color: var(--bh-accent);
+  background: color-mix(in srgb, var(--bh-accent) 8%, var(--bh-surface));
+  border-color: var(--bh-accent);
+}
+
+.book-summary.book-summary-floating {
+  color: var(--bh-text);
+  background: var(--bh-surface);
+  border-color: var(--bh-border);
+  box-shadow: var(--bh-shadow);
+}
+
+.book-summary-title,
+.book-summary-categories,
+.book-summary-text,
+.book-summary-floating .book-summary-text {
+  color: var(--bh-text);
+}
+
+.avatar-scroll-container {
+  background: var(--bh-surface-muted) !important;
+  border-color: var(--bh-border) !important;
+}
+
+:root[data-theme="dark"] .netflix-hero {
+  background:
+    radial-gradient(ellipse at 82% 22%, rgba(83, 48, 74, 0.46), transparent 42%),
+    linear-gradient(115deg, #17182a 0%, #222238 58%, #302433 100%) !important;
+}
+
+@media (max-width: 640px) {
+  .bookhub-theme-toggle {
+    min-height: 36px;
+    padding: 7px 10px;
+  }
+
+  .login-header {
+    padding: 14px 5%;
+  }
+
+  .netflix-header {
+    gap: 10px;
+  }
+}
+
+.nav-right {
+  flex: 0 1 auto;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.bookhub-theme-toggle {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  .nav-right {
+    width: 100%;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .search-container {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+
+  #search {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.profile-dropdown a {
+  color: var(--bh-text) !important;
+}
+
+.profile-dropdown a:hover {
+  color: var(--bh-text) !important;
+  background: var(--bh-surface-muted);
+}
+
+.admin-card > h2 {
+  border-bottom-color: var(--bh-border) !important;
+}
+
+.admin-card .btn-ia,
+.admin-card .btn-salvar,
+.admin-card .btn-salvar-edicao {
+  color: #fff !important;
+  background: #245ca6 !important;
+  border-color: #245ca6 !important;
+  box-shadow: 0 6px 16px rgba(36, 92, 166, 0.2) !important;
+}
+
+.admin-card .btn-ia:hover,
+.admin-card .btn-salvar:hover,
+.admin-card .btn-salvar-edicao:hover {
+  color: #fff !important;
+  background: #194b8e !important;
+  border-color: #194b8e !important;
+}
+
+:root:not([data-theme="dark"]) .btn-editar-perfil,
+:root:not([data-theme="dark"]) .btn-salvar-edicao {
+  color: #fff !important;
+  background: #245ca6 !important;
+  border-color: #245ca6 !important;
+}
+
+:root:not([data-theme="dark"]) .btn-cancelar-edicao {
+  color: var(--bh-text) !important;
+  background: var(--bh-surface-muted) !important;
+  border-color: var(--bh-border) !important;
+}
+
+:root:not([data-theme="dark"]) .btn-editar-perfil:hover,
+:root:not([data-theme="dark"]) .btn-salvar-edicao:hover {
+  background: #194b8e !important;
+  border-color: #194b8e !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

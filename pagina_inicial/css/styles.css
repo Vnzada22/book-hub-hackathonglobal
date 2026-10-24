@@ -1906,8 +1906,8 @@ textarea:focus-visible, select:focus-visible {
 .hero-info p { font-size: 14px; line-height: 1.55; }
 .hero-cta { min-height: 42px; margin-top: 18px; }
 .hero-art {
-  --hero-book-left-offset: clamp(-105px, -8vw, -78px);
-  --hero-book-right-offset: clamp(78px, 8vw, 105px);
+  --hero-book-left-offset: clamp(-132px, -11vw, -122px);
+  --hero-book-right-offset: clamp(122px, 11vw, 132px);
   min-height: 0;
   height: 100%;
 }
@@ -2021,8 +2021,8 @@ textarea:focus-visible, select:focus-visible {
   .hero-info p { font-size: 14px; }
   .hero-cta { min-height: 48px; margin-top: 22px; }
   .hero-art {
-    --hero-book-left-offset: calc(0px - clamp(88px, 27vw, 100px));
-    --hero-book-right-offset: clamp(88px, 27vw, 100px);
+    --hero-book-left-offset: calc(0px - clamp(104px, 28vw, 110px));
+    --hero-book-right-offset: clamp(104px, 28vw, 110px);
     min-height: 205px;
   }
   .hero-book {
@@ -2145,4 +2145,456 @@ textarea:focus-visible, select:focus-visible {
   .project-highlight-card-copy h2 { font-size: clamp(16px, 4.4vw, 21px); }
   .project-highlight-card-copy a { margin-top: 8px; font-size: 10px; }
   .project-highlight-card-icon { right: 5%; width: 14%; }
+}
+
+.project-highlights {
+  display: grid;
+  width: min(calc(100% - 48px), 936px);
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  margin: 30px auto 38px;
+}
+.project-highlight-banner {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 250px;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  aspect-ratio: 2.65 / 1;
+  padding: clamp(24px, 4vw, 42px);
+  color: #27231e;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(255, 255, 255, 0.82), transparent 43%),
+    radial-gradient(ellipse at 88% 88%, rgba(158, 116, 76, 0.13), transparent 42%),
+    linear-gradient(110deg, #f6f0e7 0%, #efe5d7 54%, #e9dccb 100%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 22px;
+  box-shadow: 0 14px 34px rgba(72, 51, 31, 0.13), inset 0 1px rgba(255, 255, 255, 0.8);
+}
+.project-highlight-banner.project-highlight-reserve {
+  background:
+    radial-gradient(ellipse at 88% 82%, rgba(162, 119, 78, 0.16), transparent 44%),
+    linear-gradient(110deg, #f6f0e7 0%, #efe5d7 54%, #e9dccb 100%) !important;
+}
+.project-highlight-banner::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image: radial-gradient(rgba(82, 59, 39, 0.2) 0.55px, transparent 0.75px);
+  background-size: 7px 7px;
+  content: '';
+  opacity: 0.12;
+  pointer-events: none;
+}
+.project-highlight-card-copy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  width: 48%;
+  flex-direction: column;
+  align-items: flex-start;
+  color: #29241f;
+}
+.project-highlight-card-eyebrow {
+  position: relative;
+  margin: 0 0 14px;
+  padding-left: 40px;
+  color: #4e463e;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  line-height: 1.4;
+}
+.project-highlight-card-eyebrow::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 30px;
+  height: 1px;
+  background: #55483c;
+  content: '';
+}
+.project-highlight-card-copy h2 {
+  max-width: 490px;
+  margin: 0;
+  color: #211d19;
+  font-family: var(--bookhub-font-editorial, Georgia, serif);
+  font-size: clamp(27px, 3.5vw, 42px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.project-highlight-card-copy h2 em {
+  font-weight: 500;
+}
+.project-highlight-card-copy p {
+  max-width: 40ch;
+  margin: 12px 0 0;
+  color: #514a42;
+  font-size: clamp(12px, 1.15vw, 14px);
+  line-height: 1.5;
+}
+.project-highlight-card-action {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 0 16px;
+  color: #fff;
+  background: #202329;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--bookhub-font-ui, sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+.project-highlight-card-copy .project-highlight-card-action {
+  color: #fff;
+  background: #202329;
+}
+.project-highlight-card-action:hover {
+  color: #fff;
+  background: #3a3b3d;
+  box-shadow: 0 7px 18px rgba(34, 31, 28, 0.2);
+  transform: translateY(-2px);
+}
+.project-highlight-card-action:focus-visible {
+  outline: 3px solid #d17a4a;
+  outline-offset: 3px;
+}
+.project-highlight-card-action svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+.project-highlight-card-action span {
+  font-size: 19px;
+  line-height: 0.8;
+  transition: transform 180ms ease;
+}
+.project-highlight-card-action:hover span {
+  transform: translateX(3px);
+}
+.project-highlight-art {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  width: 57%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.literature-art {
+  right: -1%;
+  width: 55%;
+  height: 106%;
+  top: -3%;
+}
+.literature-figure {
+  fill: #28241f;
+  stroke: #28241f;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+.figure-one { fill: #75604d; stroke: #75604d; }
+.figure-two { fill: #403a34; stroke: #403a34; }
+.figure-three { fill: #51473d; stroke: #51473d; }
+.figure-four { fill: #75634f; stroke: #75634f; }
+.figure-five { fill: #302d29; stroke: #302d29; }
+.art-background-line,
+.art-building,
+.art-library,
+.art-shelf,
+.art-brush {
+  fill: none;
+  stroke: rgba(77, 62, 47, 0.34);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+.art-building,
+.art-library { stroke: rgba(77, 62, 47, 0.42); }
+.art-book-stack,
+.art-stack {
+  fill: #514235;
+  stroke: #f0e3d3;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+.art-book-detail,
+.art-detail {
+  fill: none;
+  stroke: #d4bda2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+.reserve-art,
+.catalog-art {
+  width: 58%;
+  right: 0;
+}
+.reserve-art .art-library,
+.catalog-art .art-library { stroke-width: 2.5; }
+.reservation-card-art > path:first-child {
+  fill: #f7f0e5;
+  stroke: #9a836a;
+  stroke-width: 2;
+}
+.reservation-card-art > circle {
+  fill: #3d453e;
+  stroke: none;
+}
+.reservation-card-art .art-detail {
+  stroke: #3d453e;
+}
+.open-book-art {
+  fill: #f6ebdc;
+  stroke: #4d4033;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+.reservation-guide-dialog {
+  width: min(520px, calc(100% - 32px));
+  margin: auto;
+  padding: 34px;
+  color: #29241f;
+  background: #f6f0e7;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  box-shadow: 0 24px 80px rgba(16, 20, 28, 0.28);
+}
+.reservation-guide-dialog::backdrop {
+  background: rgba(18, 21, 27, 0.66);
+  backdrop-filter: blur(4px);
+}
+.reservation-guide-dialog form {
+  display: flex;
+  justify-content: flex-end;
+}
+.reservation-guide-close {
+  width: 34px;
+  height: 34px;
+  color: #514a42;
+  background: transparent;
+  border: 1px solid rgba(71, 60, 48, 0.24);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+.reservation-guide-dialog .project-highlight-card-eyebrow {
+  margin-top: 10px;
+}
+.reservation-guide-dialog h2 {
+  margin: 0;
+  color: #211d19;
+  font-family: var(--bookhub-font-editorial, Georgia, serif);
+  font-size: clamp(24px, 5vw, 34px);
+  line-height: 1.12;
+}
+.reservation-guide-dialog ol {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0 0;
+  padding-left: 22px;
+  color: #514a42;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.reservation-guide-dialog li::marker {
+  color: #c75b51;
+  font-weight: 700;
+}
+.reservation-guide-dialog > .project-highlight-card-action {
+  margin-top: 22px;
+}
+@media (max-width: 640px) {
+  .project-highlights {
+    width: calc(100% - 24px);
+    gap: 14px;
+    margin: 16px auto 28px;
+  }
+  .project-highlight-banner {
+    min-height: 198px;
+    aspect-ratio: 2.65 / 1;
+    padding: 18px;
+    border-radius: 17px;
+  }
+  .project-highlight-card-copy {
+    width: 63%;
+  }
+  .project-highlight-card-eyebrow {
+    margin-bottom: 9px;
+    padding-left: 24px;
+    font-size: 7px;
+    letter-spacing: 0.12em;
+  }
+  .project-highlight-card-eyebrow::before {
+    width: 17px;
+  }
+  .project-highlight-card-copy h2 {
+    font-size: clamp(20px, 6vw, 28px);
+    line-height: 1.04;
+  }
+  .project-highlight-card-copy p {
+    margin-top: 8px;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+  .project-highlight-card-action {
+    min-height: 32px;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 0 10px;
+    font-size: 9px;
+  }
+  .project-highlight-card-action svg {
+    width: 15px;
+    height: 15px;
+  }
+  .project-highlight-card-action span {
+    font-size: 16px;
+  }
+  .project-highlight-art {
+    right: 0;
+    width: 54%;
+  }
+  .literature-art {
+    right: 0;
+    width: 60%;
+  }
+  .reservation-guide-dialog {
+    padding: 24px;
+  }
+}
+@media (max-width: 380px) {
+  .project-highlight-banner {
+    min-height: 205px;
+    padding: 15px;
+  }
+  .project-highlight-card-copy {
+    width: 67%;
+  }
+  .project-highlight-card-copy h2 {
+    font-size: 19px;
+  }
+}
+
+.project-highlights {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.project-highlight-banner {
+  display: block;
+  min-height: 0;
+  padding: 0;
+  aspect-ratio: 1.86 / 1;
+  overflow: hidden;
+  border: 0;
+  border-radius: 20px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.project-highlight-banner::before {
+  display: none;
+}
+
+.project-highlight-literature {
+  grid-column: 1 / -1;
+  aspect-ratio: 2.65 / 1;
+}
+
+.project-highlight-reserve,
+.project-highlight-catalog {
+  aspect-ratio: 1.76 / 1;
+}
+
+.project-highlight-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 49%;
+}
+
+.project-highlight-literature .project-highlight-image {
+  object-position: center 50%;
+}
+
+.project-highlight-image-action {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.project-highlight-image-action > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.project-highlight-image-action:focus-visible {
+  outline: 3px solid #d17a4a;
+  outline-offset: 3px;
+}
+
+.literature-image-action {
+  top: 74.5%;
+  left: 4.2%;
+  width: 25%;
+  height: 12%;
+}
+
+.reservation-image-action {
+  top: 72%;
+  left: 7%;
+  width: 44%;
+  height: 16%;
+}
+
+@media (max-width: 640px) {
+  .project-highlights {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .project-highlight-literature {
+    grid-column: auto;
+    aspect-ratio: 2.65 / 1;
+  }
+
+  .project-highlight-reserve,
+  .project-highlight-catalog {
+    aspect-ratio: 1.76 / 1;
+  }
 }
