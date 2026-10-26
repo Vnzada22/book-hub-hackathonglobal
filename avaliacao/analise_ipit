@@ -1,0 +1,407 @@
+# RELATÓRIO TÉCNICO DE AVALIAÇÃO E RECOMENDAÇÕES DE CORREÇÃO
+
+**Projeto:** Book Hub — Sistema de Gestão de Acervo e Pré-Reservas de Biblioteca
+
+**Repositório:** https://github.com/Vnzada22/book-hub-hackathonglobal
+
+**Metodologia de referência:** IPIT — Ideathon Pedagógico de Inovação Tecnológica
+
+**Autoria da metodologia:** Sandra Maria Pereira
+
+**Data da avaliação:** 26 de outubro de 2026
+
+**Natureza do documento:** Devolutiva técnica e pedagógica com plano de ações corretivas.
+
+---
+
+## 1. Apresentação
+
+Este relatório apresenta os resultados da análise do projeto Book Hub, realizada com base na metodologia IPIT — Ideathon Pedagógico de Inovação Tecnológica.
+
+O objetivo é orientar a equipe desenvolvedora na correção de problemas identificados, no aprimoramento da qualidade do software e na documentação das evidências necessárias à avaliação do percurso de desenvolvimento.
+
+A avaliação contempla aspectos funcionais, técnicos, arquiteturais, metodológicos e de segurança da informação.
+
+O IPIT considera tanto a qualidade do produto desenvolvido quanto o processo de investigação, ideação, planejamento, implementação, testes, colaboração e reflexão.
+
+**Nota preliminar anteriormente atribuída: 6,0/10**, calculada sobre oito das dez dimensões da rubrica, com colaboração e pitch ainda sem avaliação conclusiva.
+
+Essa pontuação não representa a conclusão definitiva da avaliação pedagógica.
+
+## 2. Diagnóstico geral
+
+O Book Hub apresenta uma proposta relevante para a informatização de bibliotecas físicas, permitindo consultar livros, acompanhar sua disponibilidade, solicitar pré-reservas, administrar o acervo e visualizar rankings de leitores.
+
+O projeto contempla recursos como autenticação, integração com serviços externos, armazenamento em PostgreSQL e assistência por Inteligência Artificial para preenchimento de informações bibliográficas.
+
+A análise do código evidencia esforço de implementação e utilização de tecnologias compatíveis com a proposta.
+
+Entretanto, foram identificadas questões que precisam ser corrigidas para melhorar a segurança, a manutenção, a confiabilidade e a verificabilidade do sistema.
+
+Os pontos mais importantes concentram-se no controle de acesso às APIs, na configuração de segurança, na ausência de testes automatizados e na centralização de responsabilidades em um único arquivo de servidor.
+
+Além disso, o projeto precisa tornar mais explícitas as evidências das etapas pedagógicas do IPIT.
+
+## 3. Correções técnicas obrigatórias
+
+### 3.1. Implementar autorização nas rotas administrativas
+
+**Criticidade: Crítica — Prioridade P0**
+
+**Arquivos envolvidos:** `server.js`, especialmente linhas 1621–1732.
+
+**Problema identificado:**
+
+As rotas responsáveis por cadastrar, cadastrar em lote, atualizar e excluir livros não apresentam, nos respectivos handlers, a verificação de sessão e perfil administrativo.
+
+Endpoints afetados:
+
+- `POST /api/livros`
+- `POST /api/livros/lote`
+- `PUT /api/livros/:id`
+- `DELETE /api/livros/:id`
+
+A proteção visual de uma página administrativa não substitui o controle de autorização no servidor.
+
+**Implementações necessárias:**
+
+1. Criar um middleware reutilizável para autenticação.
+2. Implementar autorização baseada em papéis (RBAC).
+3. Restringir essas operações aos perfis `admin` e `professor`, desde que ambos tenham autorização institucional para administrar o acervo.
+4. Retornar HTTP 401 para usuários não autenticados e HTTP 403 para usuários sem permissão.
+5. Aplicar o mesmo mecanismo a todas as operações administrativas, sem depender exclusivamente de verificações feitas pelo frontend.
+
+**Referência de implementação:**
+
+O próprio sistema já utiliza a função `buscarUsuarioDaSessao()` e verifica perfis administrativos nas rotas de reservas. Esse mecanismo pode ser adaptado para atender às demais operações.
+
+**Critério de aceite:**
+
+- Usuários anônimos não conseguem modificar o acervo.
+- Usuários comuns recebem HTTP 403 nas operações restritas.
+- Administradores autorizados conseguem executar as operações.
+- A proteção permanece ativa mesmo quando a API é acessada diretamente, sem utilizar a interface gráfica.
+
+### 3.2. Proteger os endpoints de Inteligência Artificial
+
+**Criticidade: Alta — Prioridade P0**
+
+**Arquivo:** `server.js`, linhas 2825–2860 e trechos relacionados.
+
+**Problema identificado:**
+
+Os endpoints de preenchimento automático de informações bibliográficas não apresentam autenticação explícita nos handlers analisados.
+
+Endpoints:
+
+- `POST /api/ia/preencher`
+- `POST /api/ia/preencher-multiplo`
+
+Essas operações podem acionar serviços externos e consumir recursos computacionais ou cotas de APIs.
+
+**Implementações necessárias:**
+
+1. Exigir autenticação para utilização das rotas.
+2. Restringir operações administrativas de preenchimento em lote aos perfis autorizados.
+3. Implementar limites de requisições por usuário e por intervalo de tempo.
+4. Controlar o número de chamadas simultâneas aos provedores externos.
+5. Estabelecer tempo limite para consultas e tratar indisponibilidade dos serviços.
+6. Registrar erros e consumo sem armazenar informações pessoais desnecessárias.
+7. Manter a revisão humana antes da inclusão definitiva dos dados no catálogo.
+
+**Critério de aceite:**
+
+Usuários não autorizados não conseguem acionar os endpoints protegidos, e chamadas excessivas são rejeitadas de forma controlada.
+
+### 3.3. Corrigir a configuração de segurança da conexão com o banco
+
+**Criticidade: Alta — Prioridade P1**
+
+**Arquivo:** `server.js`, linha 23.
+
+**Problema identificado:**
+
+A conexão PostgreSQL utiliza a configuração:
+
+`ssl: { rejectUnauthorized: false }`
+
+Essa configuração desabilita a validação do certificado apresentado pelo servidor de banco de dados.
+
+**Implementações necessárias:**
+
+1. Configurar uma cadeia de certificados confiável para o provedor PostgreSQL.
+2. Habilitar a validação TLS no ambiente de produção.
+3. Definir claramente os parâmetros de conexão para desenvolvimento, homologação e produção.
+4. Garantir que credenciais permaneçam em variáveis de ambiente.
+5. Evitar a divulgação de mensagens internas de conexão nas respostas públicas da API.
+6. Confirmar o funcionamento do pool de conexões após a alteração.
+
+**Critério de aceite:**
+
+A aplicação conecta-se ao banco por TLS, validando corretamente o certificado do servidor.
+
+### 3.4. Revisar CORS e proteção contra CSRF
+
+**Criticidade: Alta — Prioridade P1**
+
+**Arquivo:** `server.js`, especialmente a configuração inicial do Express.
+
+**Problema identificado:**
+
+A aplicação utiliza `app.use(cors())` sem uma política explícita de origens permitidas. Além disso, as operações autenticadas por cookies precisam de uma avaliação específica de proteção contra Cross-Site Request Forgery (CSRF).
+
+CORS, isoladamente, não funciona como mecanismo de autorização e não substitui proteção CSRF.
+
+**Implementações necessárias:**
+
+1. Definir uma lista de origens autorizadas conforme os ambientes.
+2. Revisar o envio e as restrições de cookies de sessão.
+3. Implementar proteção CSRF para operações que modificam dados, quando aplicável ao modelo de autenticação.
+4. Validar cabeçalhos `Origin` e mecanismos adicionais apropriados.
+5. Revisar atributos `HttpOnly`, `Secure` e `SameSite`.
+6. Adicionar cabeçalhos de segurança HTTP adequados à aplicação.
+
+**Critério de aceite:**
+
+Requisições legítimas continuam funcionando, enquanto tentativas de alteração de dados por origens não autorizadas são bloqueadas.
+
+### 3.5. Melhorar a validação dos dados de entrada
+
+**Criticidade: Média — Prioridade P1**
+
+**Problema identificado:**
+
+Embora existam verificações de campos obrigatórios, a aplicação pode ser aperfeiçoada com regras de validação centralizadas e consistentes.
+
+**Implementações necessárias:**
+
+1. Criar esquemas de validação para cada recurso da API.
+2. Validar tipos, tamanhos máximos, formatos e valores permitidos.
+3. Impedir campos inesperados em operações sensíveis.
+4. Validar identificadores numéricos e parâmetros de consulta.
+5. Limitar o tamanho dos corpos das requisições.
+6. Padronizar respostas para dados inválidos.
+7. Avaliar o tratamento de URLs e conteúdos externos apresentados nas interfaces.
+
+**Critério de aceite:**
+
+As rotas rejeitam entradas inválidas com HTTP 400 ou 422, de modo padronizado, sem causar corrupção de dados ou revelar informações internas.
+
+## 4. Melhorias na arquitetura do software
+
+### 4.1. Modularização do backend
+
+**Criticidade: Média — Prioridade P2**
+
+**Problema identificado:**
+
+O arquivo `server.js` concentra aproximadamente 2.942 linhas e diversas responsabilidades, incluindo autenticação, administração de livros, reservas, integrações externas e ranking.
+
+Essa organização dificulta a evolução, a manutenção e a realização de testes isolados.
+
+**Implementações necessárias:**
+
+Organizar progressivamente o backend em módulos:
+
+- `routes/` — definição dos endpoints.
+- `controllers/` — tratamento das requisições e respostas.
+- `services/` — regras de negócio e integrações.
+- `repositories/` — operações de persistência.
+- `middlewares/` — autenticação, autorização, validação e erros.
+- `config/` — configurações de ambiente.
+- `tests/` — testes automatizados.
+
+A refatoração deverá preservar o comportamento esperado das funcionalidades existentes.
+
+**Critério de aceite:**
+
+As rotas continuam operacionais após a reorganização, com responsabilidades separadas e testes de regressão aprovados.
+
+### 4.2. Revisar a gestão de banco de dados
+
+**Criticidade: Média — Prioridade P2**
+
+**Implementações necessárias:**
+
+1. Revisar chaves primárias, estrangeiras e restrições de unicidade.
+2. Garantir integridade referencial entre usuários, livros e reservas.
+3. Verificar índices das consultas mais utilizadas.
+4. Padronizar os scripts de migração.
+5. Separar a aplicação de migrações da inicialização regular do servidor, utilizando um processo controlado.
+6. Documentar procedimentos de backup e recuperação.
+7. Validar concorrência nas operações de reserva e alterações de disponibilidade.
+8. Utilizar contas de banco com privilégios mínimos necessários.
+
+**Critério de aceite:**
+
+O esquema pode ser reproduzido em um banco limpo, as migrações são rastreáveis e os dados permanecem íntegros em cenários concorrentes.
+
+## 5. Implementação de testes e garantia da qualidade
+
+**Criticidade: Alta — Prioridade P1**
+
+A versão analisada não apresenta suíte de testes automatizados identificável.
+
+A equipe deverá implementar e documentar, no mínimo, os seguintes cenários:
+
+| Área | Teste necessário | Resultado esperado |
+|---|---|---|
+| Autenticação | Acessar rota protegida sem sessão | HTTP 401 |
+| Autorização | Usuário comum tenta excluir livro | HTTP 403 |
+| Administração | Administrador cadastra livro válido | Cadastro realizado |
+| Validação | Envio de livro sem título | Requisição rejeitada |
+| Reservas | Usuário solicita livro disponível | Solicitação criada |
+| Reservas | Usuário repete uma pré-reserva pendente | Duplicidade bloqueada |
+| Integridade | Falha durante transação de reserva | Rollback aplicado |
+| Ranking | Reserva repetida na mesma temporada | Sem pontuação duplicada |
+| IA | Usuário não autorizado acessa endpoint protegido | Acesso negado |
+| Serviços externos | API de livros fica indisponível | Erro tratado sem interromper o sistema |
+
+**Implementações necessárias:**
+
+- Adotar um framework de testes compatível com Node.js.
+- Incluir `npm test` no `package.json`.
+- Utilizar banco isolado e dados fictícios para os testes.
+- Automatizar os testes básicos no GitHub Actions.
+- Registrar falhas encontradas e as respectivas correções.
+- Produzir um relatório de validação do MVP.
+
+**Critério de aceite:**
+
+A equipe apresenta uma suíte reproduzível de testes, com execução bem-sucedida dos cenários críticos e evidências dos resultados.
+
+## 6. Adequações pedagógicas conforme a metodologia IPIT
+
+A correção do sistema também deve contemplar as evidências de aprendizagem produzidas ao longo do projeto.
+
+| Etapa IPIT | Implementação documental necessária |
+|---|---|
+| 1. Descoberta | Registrar problema, público-alvo, pesquisa e necessidades identificadas |
+| 2. Ideação | Documentar alternativas consideradas e justificativa da proposta selecionada |
+| 3. Solução | Apresentar fluxo de uso, wireframes e registros de validação |
+| 4. Tecnologia | Justificar a escolha da stack e os requisitos de segurança |
+| 5. MVP | Definir funcionalidades essenciais e critérios mensuráveis de sucesso |
+| 6. Arquitetura | Documentar componentes, modelo de dados, backlog e responsabilidades |
+| 7. Desenvolvimento | Disponibilizar testes, commits, decisões e registros das correções |
+| 8. Pitch e finalização | Apresentar demonstração funcional, resultados, limitações e retrospectiva |
+
+### 6.1. Documentar o processo de desenvolvimento
+
+Recomenda-se criar uma pasta `docs/` com registros das etapas IPIT, incluindo os problemas encontrados, hipóteses, decisões e aprendizados.
+
+Não se trata apenas de produzir documentação posteriormente, mas de tornar verificável como o projeto foi concebido, implementado e aprimorado.
+
+Quando os registros não existirem, a equipe deverá indicar essa limitação e documentar as atividades de revisão efetivamente realizadas, sem apresentar reconstruções retrospectivas como evidências contemporâneas.
+
+### 6.2. Evidenciar a colaboração
+
+O histórico consultado contém commits associados à conta `Vnzada22`, mas essa informação não é suficiente para avaliar a contribuição individual dos participantes.
+
+Recomenda-se:
+
+- Identificar os integrantes e suas responsabilidades.
+- Distribuir tarefas por issues ou outro registro equivalente.
+- Documentar revisões de código e integração das contribuições.
+- Elaborar uma retrospectiva coletiva.
+- Registrar as principais dificuldades e estratégias de solução.
+
+### 6.3. Documentar o uso de Inteligência Artificial
+
+A integração de serviços de IA ao produto não comprova, isoladamente, como a equipe utilizou IA durante o desenvolvimento.
+
+É necessário diferenciar o uso de IA como funcionalidade do sistema e seu uso como ferramenta de apoio ao processo de construção.
+
+O registro deverá contemplar:
+
+- Objetivo do uso.
+- Ferramentas utilizadas.
+- Conteúdo ou funcionalidade apoiada.
+- Verificação humana realizada.
+- Correções necessárias.
+- Limitações e riscos observados.
+
+## 7. Plano de execução e prioridades
+
+| Ordem | Entrega | Prioridade |
+|---|---|---|
+| 1 | Corrigir autorização das rotas administrativas | P0 — Crítica |
+| 2 | Restringir e limitar operações de IA | P0 — Crítica |
+| 3 | Corrigir a validação TLS do PostgreSQL | P1 — Alta |
+| 4 | Revisar CORS, cookies e proteção CSRF | P1 — Alta |
+| 5 | Padronizar validação de entradas | P1 — Alta |
+| 6 | Implementar testes automatizados de segurança e funcionalidades | P1 — Alta |
+| 7 | Modularizar o backend | P2 — Média |
+| 8 | Aperfeiçoar a gestão de migrações e banco | P2 — Média |
+| 9 | Documentar as oito etapas IPIT | P2 — Média |
+| 10 | Apresentar retrospectiva, evidências de colaboração e pitch | P2 — Média |
+
+**Ordem recomendada de trabalho:**
+
+**Ciclo 1 — Segurança:** resolver os itens críticos, revisar autenticação, autorização e proteção dos dados.
+
+**Ciclo 2 — Qualidade:** implementar testes, corrigir falhas funcionais e validar os fluxos do MVP.
+
+**Ciclo 3 — Arquitetura:** reorganizar o backend e aperfeiçoar a gestão de banco de dados.
+
+**Ciclo 4 — Evidências e apresentação:** consolidar a documentação IPIT, realizar a demonstração do sistema e apresentar os resultados da revisão.
+
+## 8. Entregáveis necessários para reavaliação
+
+A equipe deverá apresentar:
+
+1. Repositório atualizado com as correções implementadas.
+2. Histórico de commits que identifique as alterações.
+3. Testes automatizados e seus resultados.
+4. README atualizado com instruções de instalação e execução.
+5. Documentação da arquitetura e do banco de dados.
+6. Registro das vulnerabilidades corrigidas, sem divulgar credenciais ou detalhes exploráveis de ambientes reais.
+7. Documentação das etapas IPIT.
+8. Evidências de colaboração e divisão de responsabilidades.
+9. Registro do uso responsável de IA.
+10. Pitch atualizado e demonstração do MVP.
+
+A reavaliação deverá examinar a correspondência entre os problemas relatados, as alterações implementadas e os testes apresentados.
+
+## 9. Parecer técnico-pedagógico
+
+O projeto Book Hub apresenta uma base de implementação que demonstra aplicação de conhecimentos de desenvolvimento web, programação de APIs, persistência de dados, autenticação e integração de serviços.
+
+A avaliação reconhece os avanços alcançados, especialmente a construção de um MVP com funcionalidades relacionadas a uma necessidade concreta de gestão de biblioteca.
+
+Entretanto, a maturidade do sistema depende da adoção de mecanismos consistentes de segurança, testes, manutenção e documentação.
+
+As vulnerabilidades identificadas devem ser tratadas antes de disponibilizar a aplicação a usuários reais ou utilizá-la com dados pessoais em ambiente de produção.
+
+Do ponto de vista da metodologia IPIT, recomenda-se que a equipe compreenda a etapa de correção como parte essencial do processo de aprendizagem.
+
+O erro identificado, quando investigado, corrigido, testado e documentado, constitui uma oportunidade de desenvolvimento de competências técnicas, analíticas e colaborativas.
+
+**A reavaliação não deverá considerar apenas a quantidade de correções implementadas, mas sua adequação, efetividade, documentação e compreensão pela equipe.**
+
+## 10. Conclusão
+
+A recomendação é que o projeto Book Hub prossiga para um ciclo estruturado de correção, testes e aperfeiçoamento.
+
+As prioridades imediatas são:
+
+- Garantir controles de acesso adequados às operações administrativas.
+- Proteger integrações externas e recursos que possam gerar custos.
+- Corrigir configurações de segurança.
+- Implementar testes reproduzíveis das funcionalidades críticas.
+- Documentar as etapas metodológicas e as evidências de aprendizagem.
+
+Após a implementação e comprovação das melhorias, o sistema poderá ser submetido a uma nova avaliação fundamentada na rubrica IPIT.
+
+**A nota preliminar de 6,0/10 permanece como referência diagnóstica, não como classificação definitiva do projeto.**
+
+A finalidade desta devolutiva é favorecer o amadurecimento técnico da solução e a consolidação das competências desenvolvidas pela equipe, valorizando a investigação, a autonomia, a colaboração, a qualidade do software e a aprendizagem demonstrada por evidências.
+
+---
+
+**Referências**
+
+PEREIRA, Sandra Maria. *IPIT — Ideathon Pedagógico de Inovação Tecnológica*. Repositório: https://github.com/smp-sandramariapereira/IPIT_origin
+
+BOOK HUB. *Book Hub — Repositório do projeto*. Disponível em: https://github.com/Vnzada22/book-hub-hackathonglobal
+
+**Nota metodológica:** a avaliação foi realizada por inspeção estática dos arquivos disponibilizados e consulta ao repositório GitHub. Não foram realizados testes integrados em ambiente de produção. As correções propostas devem ser verificadas posteriormente por execução, testes e revisão técnica.
