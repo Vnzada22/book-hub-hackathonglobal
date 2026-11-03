@@ -1,2 +1,0 @@
-ALTER TABLE public.livros
-ADD COLUMN IF NOT EXISTS resumo TEXT;

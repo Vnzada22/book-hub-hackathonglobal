@@ -1,61 +1,89 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>BookHub — Gerenciamento de Reservas</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Caminho corrigido para a pasta de CSS correta do admin -->
-    <link rel="stylesheet" href="../css/reservas.css">
-    <link rel="stylesheet" href="/css/bookhub-theme.css">
-    <script src="/js/bookhub-theme.js"></script>
-  </head>
-  <body>
-    
-    <!-- HEADER ESTILO NETFLIX -->
-    <header class="netflix-header">
-      <div class="nav-left">
-        <!-- Logo corrigido com estilo inline para evitar o formato de link padrão (azul/pequeno) -->
-        <a href="/" class="netflix-logo" aria-label="BookHub — página inicial">
-          <img src="/assets/bookhub-heroes-logo-transparent.png" alt="BookHub — Heróis Literários em Ação">
-        </a>
-        <nav class="nav-links">
-          <a href="/admin/livros.html">Gerenciar Livros</a>
-          <a href="#" class="active">Reservas</a>
-        </nav>
-      </div>
-      <div class="nav-right">
-        <button id="homeBtn" class="btn-admin" onclick="window.location.href='/'">Ir para o Site</button>
-      </div>
-    </header>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BookHub — Gerenciamento de Reservas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/reservas.css">
+  <link rel="stylesheet" href="/css/bookhub-theme.css?v=20261029-logo-emblema">
+  <script src="/js/bookhub-theme.js"></script>
+</head>
+<body>
+  
+  <!-- HEADER ESTILO NETFLIX -->
+  <header class="netflix-header">
+    <div class="nav-left">
+      <a href="/" class="netflix-logo" aria-label="BookHub — página inicial">
+        <img src="/assets/bookhub-heroes-logo-transparent.png?v=emblema-20261029" alt="BookHub — emblema literário">
+      </a>
+      <nav class="nav-links">
+        <a href="/admin/livros.html">Gerenciar Livros</a>
+        <a href="#" class="active">Reservas</a>
+      </nav>
+    </div>
+    <div class="nav-right">
+      <button id="homeBtn" class="btn-admin" onclick="window.location.href='/'">Ir para o Site</button>
+    </div>
+  </header>
 
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="netflix-main">
-      <h2 class="row-title">Solicitações de Pré-Reserva</h2>
-      
-      <div class="table-container">
-        <table id="tabelaReservas">
-          <thead>
-            <tr>
-              <th>Livro</th>
-              <th>Aluno(a)</th>
-              <th>Data Solicitada</th>
-              <th>Status</th>
-              <th>Motivo / Observação</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Preenchido via JavaScript -->
-          </tbody>
-        </table>
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="netflix-main">
+    <h2 class="row-title">Solicitações de Pré-Reserva</h2>
+    
+    <!-- Filtros e Busca -->
+    <div class="admin-filters">
+      <div class="filter-group">
+        <label for="filtroStatus">Status</label>
+        <select id="filtroStatus" aria-label="Filtrar por status">
+          <option value="">Todos</option>
+          <option value="Pendente">Pendente</option>
+          <option value="Aprovado">Aprovado</option>
+          <option value="Rejeitado">Rejeitado</option>
+        </select>
       </div>
-    </main>
+      <div class="filter-group">
+        <label for="filtroBusca">Buscar</label>
+        <input type="text" id="filtroBusca" placeholder="Livro, aluno, email..." aria-label="Buscar por livro, aluno ou email">
+      </div>
+      <div class="filter-group">
+        <label for="filtroDataInicio">Data início</label>
+        <input type="date" id="filtroDataInicio" aria-label="Data inicial">
+      </div>
+      <div class="filter-group">
+        <label for="filtroDataFim">Data fim</label>
+        <input type="date" id="filtroDataFim" aria-label="Data final">
+      </div>
+      <button id="btnLimparFiltros" class="btn-admin btn-limpar" title="Limpar filtros">Limpar</button>
+    </div>
 
-    <!-- Caminho corrigido para a pasta de Java correta do admin -->
-    <script src="../java/reservas.js"></script>
-  </body>
+    <!-- Indicador de pendentes -->
+    <div id="badgePendentes" class="badge-pendentes" hidden>
+      <span id="contadorPendentes">0</span> solicitação(ões) pendente(s)
+    </div>
+
+    <div class="table-container">
+      <table id="tabelaReservas">
+        <thead>
+          <tr>
+            <th>Livro</th>
+            <th>Aluno(a)</th>
+            <th>Data Solicitada</th>
+            <th>Status</th>
+            <th>Motivo / Observação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Preenchido via JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="../java/reservas.js"></script>
+</body>
 </html>

@@ -1,13 +1,40 @@
 const STORAGE_KEY = 'bookhub_wallet_user';
 
 function checkAuth() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) { window.location.href = '/login/login.html'; return null; }
-  return JSON.parse(saved);
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+  } catch (_) {
+    localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+}
+
+// O cookie HttpOnly é a fonte de verdade. O cache local é apenas para a interface.
+async function carregarSessao() {
+  const resposta = await fetch('/api/auth/perfil', { credentials: 'same-origin', cache: 'no-store' });
+  if (resposta.status === 401 || resposta.status === 403) {
+    localStorage.removeItem(STORAGE_KEY);
+    window.location.replace('/login/login.html');
+    return null;
+  }
+  if (!resposta.ok) throw new Error('Não foi possível carregar a sessão.');
+  const dados = await resposta.json();
+  if (!dados.usuario) throw new Error('O servidor não retornou o perfil.');
+  if (dados.usuario.onboarding_completed === false) { window.location.replace('/perfil/completar.html'); return null; }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(dados.usuario));
+  return dados.usuario;
 }
 
 async function carregarPerfil() {
-  const user = checkAuth();
+  let user;
+  try {
+    user = await carregarSessao();
+  } catch (erro) {
+    console.error('Erro ao carregar perfil:', erro);
+    const aviso = document.getElementById('rankingAchievements');
+    if (aviso) aviso.textContent = 'Não foi possível carregar seu perfil. Atualize a página e tente novamente.';
+    return;
+  }
   if (!user) return;
 
   document.getElementById('infoUsername').textContent = user.username || user.login || '-';
@@ -31,7 +58,7 @@ async function carregarConquistasRanking(usuarioId) {
     const res = await fetch(`/api/ranking/conquistas/${encodeURIComponent(usuarioId)}`);
     const dados = await res.json();
     if (!res.ok) throw new Error(dados.erro || 'Não foi possível carregar as conquistas.');
-    const conquistas = [...dados.atuais, ...dados.historicas]
+    const conquistas = [...(dados.atuais || []), ...(dados.historicas || [])]
       .sort((a, b) => b.temporada.localeCompare(a.temporada) || a.posicao - b.posicao);
     container.replaceChildren();
 

@@ -279,3 +279,508 @@ textarea::placeholder {
   border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-1px);
 }
+
+
+/* BookHub — acabamento consistente entre temas (2026-10-29).
+   Os banners já contêm a moldura visual em sua imagem: não desenhar outra borda. */
+.project-highlight-banner,
+.project-highlight-banner:hover,
+.project-highlight-banner:focus-within {
+  border: 0 !important;
+  outline: 0;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+.project-highlight-banner .project-highlight-image {
+  border: 0;
+  border-radius: inherit;
+}
+/* Preservar um foco de teclado acessível nos links invisíveis dos banners. */
+.project-highlight-banner .project-highlight-image-action:focus-visible {
+  outline: 3px solid #177be7 !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 0 2px #fff !important;
+}
+
+/* Variáveis de componentes legados que ainda utilizam a identidade Netflix. */
+:root {
+  --net-text: var(--bh-text);
+  --net-gray: var(--bh-muted);
+  --net-gray-light: var(--bh-muted);
+  --bookhub-red: #ca2957;
+  --bookhub-red-bright: #e43f73;
+  --net-red: #ca2957;
+  --net-red-hover: #a92049;
+}
+:root[data-theme="dark"] {
+  --bookhub-red: #ff648f;
+  --bookhub-red-bright: #ff83a5;
+  --net-red: #ff648f;
+  --net-red-hover: #ff83a5;
+}
+
+/* Textos de cartões, listas, controles e menus. */
+.book-card, .book-details, .catalog-search-card, .categories-section,
+.multi-ia-box, .card-painel, .ranking-table-card, .table-container,
+.admin-card, .podium-card, .modal-content, .book-modal-content,
+.profile-dropdown, .login-box {
+  background-color: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+  border-color: var(--bh-border) !important;
+}
+.book-title, .book-details h3, .book-details strong,
+.profile-dropdown a, .profile-dropdown button,
+.reservation-guide-dialog h2, .reservation-guide-dialog li {
+  color: var(--bh-text) !important;
+}
+.book-author, .book-genre, .catalog-empty-state, .catalog-loading,
+.netflix-footer, .netflix-footer p, .book-details small,
+.ranking-proof, .ranking-header-title p {
+  color: var(--bh-muted) !important;
+}
+.book-genre, .chip:not(.active) {
+  background: var(--bh-surface-muted) !important;
+  color: var(--bh-text) !important;
+  border-color: var(--bh-border) !important;
+}
+.chip.active { color: #fff !important; background: #b72955 !important; border-color: #b72955 !important; }
+:root[data-theme="dark"] .chip.active { color: #101522 !important; background: #ff83a5 !important; border-color: #ff83a5 !important; }
+.book-card { box-shadow: 0 2px 12px rgba(23, 39, 66, .07) !important; }
+.book-card:hover, .book-card:focus-within { box-shadow: var(--bh-shadow) !important; }
+.book-card:focus-visible, .chip:focus-visible, .btn-reservar:focus-visible,
+.bookhub-theme-toggle:focus-visible {
+  outline: 3px solid var(--bh-accent) !important;
+  outline-offset: 3px;
+}
+.profile-dropdown a:hover, .profile-dropdown a:focus-visible {
+  color: var(--bh-text) !important;
+  background: var(--bh-surface-muted) !important;
+}
+:root[data-theme="dark"] .profile-dropdown a:hover,
+:root[data-theme="dark"] .profile-dropdown a:focus-visible { color: #fff !important; }
+.netflix-footer { border-top-color: var(--bh-border) !important; }
+.reservation-guide-dialog {
+  color: var(--bh-text);
+  background: var(--bh-surface);
+  border-color: var(--bh-border);
+  box-shadow: var(--bh-shadow);
+}
+.reservation-guide-dialog::backdrop { background: rgba(7, 14, 27, .65); }
+/* Evitar que o cabeçalho azul altere para o mesmo tom dos painéis. */
+.netflix-header .nav-links a, .netflix-header .netflix-nav a,
+.netflix-header .nav-links a:hover,
+.netflix-header .nav-links a.active { color: #fff !important; }
+/* Transição suave sem animar tamanho ou posição. */
+.book-card, .chip, .profile-dropdown, .reservation-guide-dialog,
+.login-box, .admin-card, .table-container, .ranking-table-card {
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  body, .book-card, .chip, .profile-dropdown, .reservation-guide-dialog,
+  .login-box, .admin-card, .table-container, .ranking-table-card { transition: none !important; }
+}
+
+/* BookHub: separar visualmente os livros do fundo no modo claro.
+   Restrito aos cards do catálogo: não restaura bordas dos banners iniciais. */
+:root:not([data-theme="dark"]) .book-card,
+:root[data-theme="light"] .book-card {
+  background: #fff !important;
+  border: 1px solid #cfd9e7 !important;
+  box-shadow: 0 5px 15px rgba(22, 39, 69, .13), 0 1px 3px rgba(22, 39, 69, .07) !important;
+}
+:root:not([data-theme="dark"]) .book-card:hover,
+:root:not([data-theme="dark"]) .book-card:focus-within,
+:root[data-theme="light"] .book-card:hover,
+:root[data-theme="light"] .book-card:focus-within {
+  border-color: #b6c6da !important;
+  box-shadow: 0 13px 30px rgba(22, 39, 69, .20), 0 3px 8px rgba(22, 39, 69, .08) !important;
+}
+:root:not([data-theme="dark"]) .book-card .book-details,
+:root[data-theme="light"] .book-card .book-details {
+  background: #fff !important;
+  color: var(--bh-text) !important;
+}
+:root[data-theme="dark"] .book-card {
+  background: var(--bh-surface) !important;
+  border: 1px solid #40516a !important;
+  box-shadow: 0 7px 24px rgba(0, 0, 0, .29) !important;
+}
+:root[data-theme="dark"] .book-card:hover,
+:root[data-theme="dark"] .book-card:focus-within {
+  border-color: #637895 !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .39) !important;
+}
+
+/* Cards do catálogo: contraste e tipografia legíveis em ambos os temas. */
+:root:not([data-theme="dark"]) .book-card,
+:root[data-theme="light"] .book-card {
+  background: #fff !important;
+  border: 2px solid #a5b5ca !important;
+  box-shadow: 0 9px 28px rgba(18, 38, 67, .22), 0 2px 5px rgba(18,38,67,.12) !important;
+  overflow: hidden;
+}
+:root:not([data-theme="dark"]) .book-card .book-details,
+:root[data-theme="light"] .book-card .book-details {
+  background: #fff !important;
+  border-top: 1px solid #d5deeb;
+}
+:root:not([data-theme="dark"]) .book-card .book-title,
+:root[data-theme="light"] .book-card .book-title {
+  color: #132944 !important;
+}
+:root:not([data-theme="dark"]) .book-card .book-author,
+:root[data-theme="light"] .book-card .book-author {
+  color: #455773 !important;
+}
+.book-card .book-title { font-family: 'Outfit', Arial, sans-serif !important; font-size: 15px !important; font-weight: 700 !important; line-height: 1.4 !important; letter-spacing: 0 !important; }
+.book-card .book-author { font-family: 'Outfit', Arial, sans-serif !important; font-size: 12px !important; font-weight: 500 !important; line-height: 1.5 !important; white-space: normal !important; overflow-wrap: anywhere; }
+:root[data-theme="dark"] .book-card .book-title { color: #f8fafc !important; }
+:root[data-theme="dark"] .book-card .book-author { color: #c5d0df !important; }
+:root[data-theme="dark"] .book-card .book-details { border-top: 1px solid #45546b; }
+
+
+/* BookHub 2026-10-29 — contraste legível, administração e ranking.
+   Regras específicas para não alterar textos brancos do cabeçalho azul. */
+:root {
+  --bh-action: #174679;
+  --bh-action-hover: #0e335e;
+  --bh-section-border: #cbd6e5;
+}
+:root[data-theme="dark"] {
+  --bh-action: #37669b;
+  --bh-action-hover: #4b7bb1;
+  --bh-section-border: #43536b;
+}
+/* Ranking: textos herdados de um tema originalmente escuro. */
+.ranking-container,
+.ranking-header-title h1,
+.ranking-season-toolbar,
+.ranking-season-toolbar label,
+#seasonStatusText,
+.ranking-table-card h3,
+.ranking-table,
+.ranking-table tbody,
+.ranking-table tbody tr,
+.ranking-table td,
+.ranking-table td .user-cell,
+.ranking-table td .user-cell span,
+.ranking-table td .user-cell a,
+.ranking-table .user-cell,
+.podium-card .podium-name,
+.podium-card .podium-name a,
+.podium-card .podium-score,
+.ranking-table .pos-number {
+  color: var(--bh-text) !important;
+}
+.ranking-header-title p,
+.ranking-table th,
+.ranking-proof { color: var(--bh-muted) !important; }
+.ranking-table-card, .podium-card {
+  background: var(--bh-surface) !important;
+  border: 1px solid var(--bh-section-border) !important;
+  box-shadow: var(--bh-shadow) !important;
+}
+.podium-card.first {
+  border-color: #c59228 !important;
+  background: linear-gradient(180deg, rgba(224,174,69,.12), var(--bh-surface) 75%) !important;
+}
+.podium-card.second { border-color: #8799b2 !important; }
+.podium-card.third { border-color: #b98050 !important; }
+.ranking-table th, .ranking-table td { border-bottom: 1px solid var(--bh-section-border) !important; }
+.ranking-table tbody tr:hover { background: var(--bh-surface-muted) !important; }
+#seasonSelector { color: var(--bh-text) !important; background-color: var(--bh-surface) !important; }
+
+/* Administração: separar visualmente busca, lotes, formulário e resultados. */
+.admin-card { background: var(--bh-surface) !important; color: var(--bh-text) !important; border: 1px solid var(--bh-section-border) !important; }
+.admin-card h2 { color: var(--bh-text) !important; border-bottom: 2px solid var(--bh-section-border) !important; }
+.admin-card h3, .admin-card h4, .catalog-search-card h3,
+.admin-card .input-group label, .admin-card label,
+.multi-ia-review h3, .multi-ia-book h4 { color: var(--bh-text) !important; }
+.admin-card .multi-ia-review > p, .multi-ia-skipped,
+.admin-card .multi-ia-book .book-source,
+.admin-card .multi-ia-book .book-source-links,
+.admin-card .input-help { color: var(--bh-muted) !important; }
+.admin-card .catalog-search-card {
+  background: var(--bh-surface-muted) !important;
+  border: 1px solid var(--bh-section-border) !important;
+  box-shadow: 0 5px 18px rgba(22, 45, 77, .07) !important;
+}
+.admin-card .multi-ia-review, .admin-card .multi-ia-save-all-wrap {
+  border-top: 1px solid var(--bh-section-border) !important;
+}
+.admin-card .multi-ia-book {
+  background: var(--bh-surface) !important;
+  border: 1px solid var(--bh-section-border) !important;
+}
+.admin-card input, .admin-card textarea, .admin-card select {
+  background: var(--bh-surface) !important;
+  color: var(--bh-text) !important;
+  border: 1px solid var(--bh-section-border) !important;
+}
+.admin-card input:focus, .admin-card textarea:focus, .admin-card select:focus {
+  border-color: var(--bh-action) !important;
+  box-shadow: 0 0 0 3px rgba(56, 117, 182, .19) !important;
+}
+/* Botões principais azul-marinho, em vez do vermelho antigo. */
+.admin-card .btn-ia,
+.admin-card .btn-salvar,
+.admin-card .btn-multi-processar,
+.admin-card .btn-save-review,
+.admin-card .btn-multi-save-all,
+.admin-card .btn-salvar-edicao {
+  background: var(--bh-action) !important;
+  background-image: none !important;
+  color: #fff !important;
+  border: 1px solid var(--bh-action) !important;
+  box-shadow: 0 6px 16px rgba(15, 54, 98, .17) !important;
+}
+.admin-card .btn-ia:hover,
+.admin-card .btn-salvar:hover,
+.admin-card .btn-multi-processar:hover,
+.admin-card .btn-save-review:hover,
+.admin-card .btn-multi-save-all:hover,
+.admin-card .btn-salvar-edicao:hover {
+  background: var(--bh-action-hover) !important;
+  border-color: var(--bh-action-hover) !important;
+}
+/* Botões de exclusão permanecem com tom de alerta para sinalizar risco. */
+@media (max-width: 720px) {
+  .admin-card .single-book-search .ia-group,
+  .admin-card .multi-ia-entry { flex-wrap: wrap; }
+  .admin-card .single-book-search .btn-ia,
+  .admin-card .btn-multi-processar { flex: 1 1 100%; }
+  .ranking-table-card { padding: 16px !important; overflow-x: auto; }
+  .ranking-table th, .ranking-table td { padding: 10px 8px; }
+}
+
+/* BookHub — contraste consistente nos temas e tabela administrativa funcional.
+   Escopo direcionado para não clarear o cabeçalho/nav em fundo azul. */
+:root:not([data-theme="dark"]) .admin-card #tabelaLivros,
+:root[data-theme="light"] .admin-card #tabelaLivros {
+  color: #1c2940 !important;
+}
+:root:not([data-theme="dark"]) #tabelaLivros thead,
+:root[data-theme="light"] #tabelaLivros thead { background: #e9eff7 !important; }
+:root:not([data-theme="dark"]) #tabelaLivros th,
+:root[data-theme="light"] #tabelaLivros th { color: #324765 !important; }
+:root:not([data-theme="dark"]) #tabelaLivros td,
+:root:not([data-theme="dark"]) #tabelaLivros td *,
+:root[data-theme="light"] #tabelaLivros td,
+:root[data-theme="light"] #tabelaLivros td * { color: #213047 !important; }
+:root:not([data-theme="dark"]) #tabelaLivros tbody tr:nth-child(even),
+:root[data-theme="light"] #tabelaLivros tbody tr:nth-child(even) { background: #f6f8fc !important; }
+:root:not([data-theme="dark"]) #tabelaLivros tbody tr:hover,
+:root[data-theme="light"] #tabelaLivros tbody tr:hover { background: #eaf2fb !important; }
+:root:not([data-theme="dark"]) .admin-card .table-responsive,
+:root[data-theme="light"] .admin-card .table-responsive { border: 1px solid #c5d2e3 !important; background: #fff !important; }
+#tabelaLivros { min-width: 980px; table-layout: auto !important; }
+#tabelaLivros th, #tabelaLivros td { height: auto !important; padding: 14px 12px; border-bottom: 1px solid var(--bh-section-border) !important; vertical-align: middle; }
+#tabelaLivros tbody tr { height: auto !important; }
+#tabelaLivros .admin-book-title { font-size: 14px; font-weight: 700; }
+#tabelaLivros .admin-book-author, #tabelaLivros .admin-book-publisher,
+#tabelaLivros .admin-book-genre, #tabelaLivros .admin-book-year { font-size: 13px; }
+#tabelaLivros .admin-book-cover-cell { min-width: 90px; }
+#tabelaLivros .admin-book-actions-cell { min-width: 110px; }
+#tabelaLivros .admin-empty-state { padding: 28px; text-align: center; color: var(--bh-muted) !important; }
+#tabelaLivros .admin-availability { display: inline-block; padding: 5px 11px; border-radius: 999px; font-weight: 700; font-size: 12px; }
+:root:not([data-theme="dark"]) #tabelaLivros .admin-availability.is-available,
+:root[data-theme="light"] #tabelaLivros .admin-availability.is-available { color: #126340 !important; background: #dff5e9; }
+:root:not([data-theme="dark"]) #tabelaLivros .admin-availability.is-unavailable,
+:root[data-theme="light"] #tabelaLivros .admin-availability.is-unavailable { color: #853322 !important; background: #fff0e6; }
+:root:not([data-theme="dark"]) #tabelaLivros .btn-editar,
+:root[data-theme="light"] #tabelaLivros .btn-editar { color: #fff !important; background: #174679 !important; border-color: #174679 !important; }
+:root:not([data-theme="dark"]) #tabelaLivros .btn-excluir,
+:root[data-theme="light"] #tabelaLivros .btn-excluir { color: #922b37 !important; background: #fff1f2 !important; border: 1px solid #dfa4ac !important; }
+:root[data-theme="dark"] #tabelaLivros td,
+:root[data-theme="dark"] #tabelaLivros .admin-book-title,
+:root[data-theme="dark"] #tabelaLivros .admin-book-author,
+:root[data-theme="dark"] #tabelaLivros .admin-book-publisher,
+:root[data-theme="dark"] #tabelaLivros .admin-book-genre,
+:root[data-theme="dark"] #tabelaLivros .admin-book-year { color: #edf2fb !important; }
+:root[data-theme="dark"] #tabelaLivros th { color: #c3d0e0 !important; background: #23314a; }
+:root[data-theme="dark"] #tabelaLivros .admin-availability.is-available { color: #9eebc3 !important; background: #1b4236; }
+:root[data-theme="dark"] #tabelaLivros .admin-availability.is-unavailable { color: #ffb7ae !important; background: #4a2c2d; }
+:root[data-theme="dark"] #tabelaLivros .btn-editar { color: #fff !important; background: #37669b !important; border-color: #5886b7 !important; }
+:root[data-theme="dark"] #tabelaLivros .btn-excluir { color: #ffd0d4 !important; background: #49313a !important; border-color: #a66675 !important; }
+.admin-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 12px 18px; margin: 22px 0 18px; }
+.admin-filters .filter-group { display: flex; flex-direction: column; gap: 6px; min-width: 150px; }
+.admin-filters .filter-group:last-of-type { flex: 1 1 220px; }
+.admin-filters label { color: var(--bh-text) !important; font-size: 13px; font-weight: 650; }
+.admin-filters input, .admin-filters select { width: 100%; min-height: 42px; border-radius: 9px; background: var(--bh-surface) !important; color: var(--bh-text) !important; border: 1px solid var(--bh-section-border) !important; padding: 8px 11px; }
+.admin-filters input::placeholder { color: var(--bh-muted) !important; }
+.admin-filters .btn-limpar { min-height: 42px; border-radius: 9px; background: var(--bh-action) !important; color: #fff !important; border: 1px solid var(--bh-action) !important; padding: 0 18px; cursor: pointer; }
+.admin-filters :is(input,select,button):focus-visible { outline: 3px solid #6497d0; outline-offset: 2px; }
+/* Evitar regressões dos estilos brancos antigos em títulos e textos das páginas claras. */
+:root:not([data-theme="dark"]) .admin-card .row-title,
+:root:not([data-theme="dark"]) .admin-card .admin-book-title,
+:root:not([data-theme="dark"]) .admin-card .admin-book-author,
+:root:not([data-theme="dark"]) .admin-card .admin-book-genre,
+:root:not([data-theme="dark"]) .admin-card .multi-ia-save-all-status,
+:root:not([data-theme="dark"]) .admin-card .multi-ia-book .book-review-status,
+:root[data-theme="light"] .admin-card .row-title,
+:root[data-theme="light"] .admin-card .multi-ia-save-all-status { color: var(--bh-text) !important; }
+:root:not([data-theme="dark"]) .admin-card .multi-ia-book .book-source-links a { color: #174679 !important; }
+
+/* Tabela de livros: largura estável para 8 colunas, sem quebrar palavras letra por letra.
+   Em telas pequenas a tabela rola horizontalmente, preservando a leitura. */
+.admin-card .table-responsive { overflow-x: auto !important; overflow-y: visible; -webkit-overflow-scrolling: touch; max-width: 100%; }
+#tabelaLivros { width: 100% !important; min-width: 1370px !important; table-layout: fixed !important; border-collapse: collapse; }
+#tabelaLivros th:nth-child(1), #tabelaLivros td:nth-child(1) { width: 100px !important; }
+#tabelaLivros th:nth-child(2), #tabelaLivros td:nth-child(2) { width: 235px !important; }
+#tabelaLivros th:nth-child(3), #tabelaLivros td:nth-child(3) { width: 220px !important; }
+#tabelaLivros th:nth-child(4), #tabelaLivros td:nth-child(4) { width: 210px !important; }
+#tabelaLivros th:nth-child(5), #tabelaLivros td:nth-child(5) { width: 230px !important; }
+#tabelaLivros th:nth-child(6), #tabelaLivros td:nth-child(6) { width: 80px !important; }
+#tabelaLivros th:nth-child(7), #tabelaLivros td:nth-child(7) { width: 125px !important; }
+#tabelaLivros th:nth-child(8), #tabelaLivros td:nth-child(8) { width: 170px !important; }
+#tabelaLivros td.admin-book-title, #tabelaLivros td.admin-book-author,
+#tabelaLivros td.admin-book-publisher, #tabelaLivros td.admin-book-genre {
+  display: table-cell !important; /* desfaz o display:-webkit-box anterior nos <td> */
+  overflow: visible !important;
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+  -webkit-line-clamp: unset !important;
+  -webkit-box-orient: initial !important;
+  line-height: 1.5 !important;
+  vertical-align: middle !important;
+  text-align: left !important;
+}
+#tabelaLivros tbody tr, #tabelaLivros tbody td { height: auto !important; }
+#tabelaLivros td { padding: 16px 12px !important; }
+#tabelaLivros .admin-book-title { font-size: 15px !important; font-weight: 700 !important; }
+#tabelaLivros .admin-book-author, #tabelaLivros .admin-book-publisher,
+#tabelaLivros .admin-book-genre { font-size: 13px !important; }
+:root:not([data-theme="dark"]) #tabelaLivros td.admin-book-title,
+:root:not([data-theme="dark"]) #tabelaLivros td.admin-book-author,
+:root:not([data-theme="dark"]) #tabelaLivros td.admin-book-publisher,
+:root:not([data-theme="dark"]) #tabelaLivros td.admin-book-genre { color: #1d2c43 !important; }
+:root[data-theme="dark"] #tabelaLivros td.admin-book-title,
+:root[data-theme="dark"] #tabelaLivros td.admin-book-author,
+:root[data-theme="dark"] #tabelaLivros td.admin-book-publisher,
+:root[data-theme="dark"] #tabelaLivros td.admin-book-genre { color: #edf2fb !important; }
+
+/* 2026-10-29 — Tabela de livros sem rolagem lateral: utiliza a largura da pagina.
+   Revoga as larguras fixas da versao anterior e preserva palavras completas. */
+.admin-card .table-responsive {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  width: 100%;
+  max-width: 100%;
+}
+#tabelaLivros {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  table-layout: fixed !important;
+}
+#tabelaLivros th, #tabelaLivros td { min-width: 0 !important; box-sizing: border-box; }
+#tabelaLivros th:nth-child(1), #tabelaLivros td:nth-child(1) { width: 8% !important; }
+#tabelaLivros th:nth-child(2), #tabelaLivros td:nth-child(2) { width: 18% !important; }
+#tabelaLivros th:nth-child(3), #tabelaLivros td:nth-child(3) { width: 17% !important; }
+#tabelaLivros th:nth-child(4), #tabelaLivros td:nth-child(4) { width: 16% !important; }
+#tabelaLivros th:nth-child(5), #tabelaLivros td:nth-child(5) { width: 15% !important; }
+#tabelaLivros th:nth-child(6), #tabelaLivros td:nth-child(6) { width: 7% !important; }
+#tabelaLivros th:nth-child(7), #tabelaLivros td:nth-child(7) { width: 9% !important; }
+#tabelaLivros th:nth-child(8), #tabelaLivros td:nth-child(8) { width: 10% !important; }
+#tabelaLivros th { padding: 12px 6px !important; font-size: 10px !important; letter-spacing: .035em !important; white-space: normal !important; overflow-wrap: break-word !important; }
+#tabelaLivros td { padding: 12px 6px !important; font-size: 12px !important; line-height: 1.4 !important; white-space: normal !important; overflow-wrap: break-word !important; word-break: normal !important; }
+#tabelaLivros .admin-book-title { font-size: 13px !important; }
+#tabelaLivros .admin-book-author, #tabelaLivros .admin-book-publisher, #tabelaLivros .admin-book-genre { font-size: 12px !important; }
+#tabelaLivros .book-cover { width: min(100%, 58px) !important; height: auto !important; aspect-ratio: 7 / 9; object-fit: cover; }
+#tabelaLivros .btn-editar, #tabelaLivros .btn-excluir { min-width: 0 !important; max-width: 100%; width: 100% !important; padding: 7px 3px !important; font-size: 11px !important; }
+/* Em celulares, cada livro vira um cartao vertical: todas as informacoes sem barra lateral. */
+@media (max-width: 760px) {
+  #tabelaLivros, #tabelaLivros tbody, #tabelaLivros tr, #tabelaLivros td { display: block !important; width: 100% !important; }
+  #tabelaLivros thead { display: none !important; }
+  #tabelaLivros tbody { display: grid !important; grid-template-columns: 1fr; gap: 14px; }
+  #tabelaLivros tbody tr { padding: 12px; border: 1px solid var(--bh-section-border); border-radius: 12px; overflow: hidden; }
+  #tabelaLivros tbody td { display: grid !important; grid-template-columns: minmax(95px, 30%) minmax(0,1fr); gap: 8px; align-items: start; padding: 8px 4px !important; border-bottom: 1px solid var(--bh-section-border); }
+  #tabelaLivros tbody td:last-child { border-bottom: none; }
+  #tabelaLivros tbody td::before { content: ''; font-weight: 700; font-size: 11px; color: var(--bh-muted); }
+  #tabelaLivros tbody td:nth-child(1)::before { content: 'Capa'; }
+  #tabelaLivros tbody td:nth-child(2)::before { content: 'Titulo'; }
+  #tabelaLivros tbody td:nth-child(3)::before { content: 'Autor'; }
+  #tabelaLivros tbody td:nth-child(4)::before { content: 'Editora'; }
+  #tabelaLivros tbody td:nth-child(5)::before { content: 'Genero'; }
+  #tabelaLivros tbody td:nth-child(6)::before { content: 'Ano'; }
+  #tabelaLivros tbody td:nth-child(7)::before { content: 'Disponivel'; }
+  #tabelaLivros tbody td:nth-child(8)::before { content: 'Acoes'; }
+  #tabelaLivros tbody td:nth-child(8) { display: flex !important; flex-wrap: wrap; gap: 8px; }
+  #tabelaLivros tbody td:nth-child(8)::before { width: 100%; }
+  #tabelaLivros .btn-editar, #tabelaLivros .btn-excluir { width: auto !important; min-width: 90px !important; padding: 8px 14px !important; }
+}
+
+
+/* Identidade visual compartilhada: logo alinhada de forma uniforme em todas as telas.
+   A altura constante evita pequenos saltos de posicionamento entre páginas. */
+:root { --bh-header-logo-width: 180px; --bh-header-logo-height: 54px; }
+.netflix-header, .login-header {
+  box-sizing: border-box !important;
+  min-height: 76px !important;
+  padding: 10px 4% !important;
+  align-items: center !important;
+}
+.netflix-header .nav-left, .netflix-header .header-left,
+.netflix-header .nav-right { align-items: center !important; }
+.netflix-header .brand-logo, .netflix-header .netflix-logo,
+.netflix-header .site-logo, .login-header .site-logo {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  width: var(--bh-header-logo-width) !important;
+  min-width: var(--bh-header-logo-width) !important;
+  max-width: var(--bh-header-logo-width) !important;
+  height: var(--bh-header-logo-height) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  flex: 0 0 var(--bh-header-logo-width) !important;
+  line-height: 0 !important;
+}
+.netflix-header .brand-logo img, .netflix-header .netflix-logo img,
+.netflix-header .site-logo img, .login-header .site-logo img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+/* Acesso ao gerenciamento de reservas no painel administrativo. */
+.admin-header-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+.netflix-header .admin-reservations-link {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px; padding: 9px 17px; border-radius: 10px;
+  background: #234f88; border: 1px solid rgba(255,255,255,.26);
+  color: #fff !important; font-weight: 650; font-size: 13px;
+  line-height: 1.3; text-decoration: none; white-space: nowrap;
+  transition: background .2s ease, border-color .2s ease;
+}
+.netflix-header .admin-reservations-link:hover { background: #326aaf; border-color: #fff; }
+.netflix-header .admin-reservations-link:focus-visible { outline: 3px solid #f6d68a; outline-offset: 3px; }
+@media (max-width: 640px) {
+  :root { --bh-header-logo-width: 136px; --bh-header-logo-height: 44px; }
+  .netflix-header, .login-header { min-height: 68px !important; padding: 8px 4% !important; }
+  .netflix-header .admin-reservations-link { padding: 8px 10px; font-size: 12px; white-space: normal; text-align: center; }
+}
+
+
+/* Busca de livros simplificada: a entrada em lote só aparece ao clicar. */
+#multiIABox[hidden], .multi-ia-box[hidden], #avisoPaginas[hidden], #avisoResumo[hidden] { display: none !important; }
+.admin-section-title { margin: 22px 0 20px; padding: 12px 0; font-family: 'Fraunces', Georgia, serif; font-size: 18px; border-bottom: 1px solid var(--bh-section-border,#476078); }
+.admin-section-subtitle { margin-left: 10px; font-family: 'Outfit',sans-serif; font-size: 12px; font-weight: 400; color: var(--bh-muted,#9fb0c7); }
+.admin-section-title.has-search-results { border-bottom: 2px solid #5892d9; }
+.multi-ia-trigger-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 19px 0 6px; margin-top: 22px; border-top: 1px solid var(--bh-section-border,#476078); font-size: 13px; color: var(--bh-muted,#9fb0c7); }
+.btn-multi-toggle { border: 1px solid #5783bc; background: transparent; color: var(--bh-text,#fff); padding: 11px 17px; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.btn-multi-toggle:hover { background: rgba(69,126,190,.14); }
+.multi-ia-heading { display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap:12px; }
+.multi-ia-heading .btn-cancelar { font-size:12px; padding:8px 12px; }
+.ia-page-suggestion, .ia-summary-note { font-size: 12px; line-height: 1.5; margin: 7px 0 0; color: var(--bh-muted,#aebdd3); }
+.ia-summary-note.needs-review { color: #facb72 !important; }
+.btn-use-estimated-pages { background: transparent; border: 1px solid #6093ce; border-radius: 8px; padding: 5px 9px; cursor:pointer; font-size:12px; color: var(--bh-text,#fff); }
+:root:not([data-theme='dark']) .btn-use-estimated-pages, :root:not([data-theme='dark']) .btn-multi-toggle { color:#174679; }
+:root:not([data-theme='dark']) .ia-summary-note.needs-review {color:#805219 !important;}
+#dadosLivroTitulo { scroll-margin-top: 100px; }
+@media (max-width:600px) { .admin-section-subtitle {display:block;margin:4px 0 0;} }

@@ -788,3 +788,34 @@ button { line-height: 1.25; }
 .ranking-header-title p { margin-left: auto; margin-right: auto; text-align: center; }
 .ranking-table-card h3, .admin-card h2, .card-painel h3 { text-align: left; }
 .netflix-footer p { max-width: 72ch; line-height: 1.7; }
+
+/* Feedback acessível da consulta bibliográfica (claro e escuro). */
+.ia-feedback { margin-top:12px; padding:12px 14px; border:1px solid #86a8d6; border-radius:10px; background:rgba(55,110,175,.11); color:inherit; line-height:1.5; font-size:14px; }
+.ia-feedback[hidden] { display:none; }
+.ia-feedback p { margin:0; color:inherit; }
+.ia-feedback.is-success { border-color:#3d9b75; background:rgba(48,156,110,.12); }
+.ia-feedback.is-warning { border-color:#b48c34; background:rgba(200,154,42,.12); }
+.ia-feedback.is-error { border-color:#ce6278; background:rgba(204,79,108,.11); }
+.ia-feedback-sources { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+.ia-feedback-sources a { color:#84bafb; text-decoration:underline; text-underline-offset:3px; }
+.ia-helper { font-size:12px; margin:10px 0 0; opacity:.85; line-height:1.5; }
+html[data-theme="light"] .ia-feedback-sources a, body.light-mode .ia-feedback-sources a { color:#174679; }
+
+
+/* Busca de livros simplificada: a entrada em lote só aparece ao clicar. */
+#multiIABox[hidden], .multi-ia-box[hidden], #avisoPaginas[hidden], #avisoResumo[hidden] { display: none !important; }
+.admin-section-title { margin: 22px 0 20px; padding: 12px 0; font-family: 'Fraunces', Georgia, serif; font-size: 18px; border-bottom: 1px solid var(--bh-section-border,#476078); }
+.admin-section-subtitle { margin-left: 10px; font-family: 'Outfit',sans-serif; font-size: 12px; font-weight: 400; color: var(--bh-muted,#9fb0c7); }
+.admin-section-title.has-search-results { border-bottom: 2px solid #5892d9; }
+.multi-ia-trigger-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 19px 0 6px; margin-top: 22px; border-top: 1px solid var(--bh-section-border,#476078); font-size: 13px; color: var(--bh-muted,#9fb0c7); }
+.btn-multi-toggle { border: 1px solid #5783bc; background: transparent; color: var(--bh-text,#fff); padding: 11px 17px; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.btn-multi-toggle:hover { background: rgba(69,126,190,.14); }
+.multi-ia-heading { display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap:12px; }
+.multi-ia-heading .btn-cancelar { font-size:12px; padding:8px 12px; }
+.ia-page-suggestion, .ia-summary-note { font-size: 12px; line-height: 1.5; margin: 7px 0 0; color: var(--bh-muted,#aebdd3); }
+.ia-summary-note.needs-review { color: #facb72 !important; }
+.btn-use-estimated-pages { background: transparent; border: 1px solid #6093ce; border-radius: 8px; padding: 5px 9px; cursor:pointer; font-size:12px; color: var(--bh-text,#fff); }
+:root:not([data-theme='dark']) .btn-use-estimated-pages, :root:not([data-theme='dark']) .btn-multi-toggle { color:#174679; }
+:root:not([data-theme='dark']) .ia-summary-note.needs-review {color:#805219 !important;}
+#dadosLivroTitulo { scroll-margin-top: 100px; }
+@media (max-width:600px) { .admin-section-subtitle {display:block;margin:4px 0 0;} }

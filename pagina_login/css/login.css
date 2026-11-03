@@ -748,3 +748,34 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--bookhub-font-editorial); }
 .avatar-scroll-container { background: rgba(10, 10, 12, 0.52); border-color: rgba(255, 255, 255, 0.1); }
 .btn-primary { border-radius: 10px; }
 .btn-secondary { border-radius: 10px; }
+
+/* BookHub — autenticação refinada */
+.netflix-login-bg {
+  background: radial-gradient(ellipse at 22% 12%,rgba(24,68,116,.34),transparent 42%),radial-gradient(ellipse at 87% 84%,rgba(170,125,45,.12),transparent 43%),linear-gradient(145deg,#0b1321,#101d31 54%,#101522);
+}
+.login-header {background:rgba(11,24,43,.72);border-bottom:1px solid rgba(185,207,234,.12)}
+.login-box {max-width:490px;background:linear-gradient(145deg,rgba(18,33,55,.98),rgba(12,22,38,.97));border:1px solid rgba(179,205,235,.2);box-shadow:0 30px 85px rgba(3,12,28,.55)}
+.auth-form h1 {color:#fff}
+.login-subtitle,.auth-help {color:#c4cfdd}
+.social-login {flex-wrap:wrap;gap:12px;margin-top:12px}
+.social-button {height:52px;width:52px;background:#050609!important;border:1px solid #344052!important;border-radius:14px;transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.social-button:hover {background:#10131c!important;border-color:#9fb3d4!important;box-shadow:0 8px 22px rgba(0,0,0,.32)}
+.social-button svg {width:28px;height:28px}
+.social-button:focus-visible {outline:3px solid #e2bb6a;outline-offset:3px}
+.wallet-explainer {color:#afc0d4;text-align:center;font-size:12px;line-height:1.5;margin:12px 0 4px}
+.auth-input,.input-group input {background:#111f34;border:1px solid #53677e;color:#fff}
+.auth-input::placeholder,.input-group input::placeholder {color:#a3b2c7}
+.auth-input:focus,.input-group input:focus {background:#142840;border-color:#d7ab62;box-shadow:0 0 0 3px rgba(215,171,98,.16)}
+.btn-primary {background:linear-gradient(120deg,#1b4679,#2c609c);border-color:#4a79ad;box-shadow:0 8px 24px rgba(15,46,91,.35)}
+.btn-primary:hover {background:linear-gradient(120deg,#285b96,#3975b4);box-shadow:0 12px 30px rgba(15,46,91,.45)}
+.auth-help a,.text-button {color:#b7d8ff}
+@media(max-width:480px){.login-box{padding:28px 20px}.social-button{width:48px;height:48px}}
+@media(prefers-reduced-motion:reduce){.social-button,.btn-primary{transition:none}}
+
+/* Ícones das carteiras com o mesmo fundo e dimensões dos demais provedores */
+.social-login .social-button {background:#050609!important;border-radius:14px;}
+.social-login .social-phantom svg {width:32px;height:32px;}
+.social-login .social-metamask img {width:32px;height:32px;object-fit:contain;background:transparent;border:0;border-radius:0;box-shadow:none;}
+
+/* Ícone Phantom personalizado: mesmo enquadramento dos demais provedores. */
+.social-login .social-phantom img{display:block;width:34px;height:34px;object-fit:contain;border:0;background:#050609;border-radius:0;box-shadow:none;}
