@@ -812,5 +812,36 @@ async function carregarLivros() {
   }
 }
 
-renderUserState();
+// Sincroniza o estado visual com a sessão do servidor, inclusive após OAuth.
+async function sincronizarSessaoInicial() {
+  try {
+    const resposta = await fetch('/api/auth/perfil', { credentials: 'same-origin', cache: 'no-store' });
+    if (resposta.ok) {
+      const dados = await resposta.json();
+      if (dados.usuario) {
+        if (dados.usuario.onboarding_completed !== true || !String(dados.usuario.username || '').trim()) {
+          localStorage.removeItem(STORAGE_KEY);
+          window.location.replace('/perfil/completar.html');
+          return;
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dados.usuario));
+      }
+    } else if (resposta.status === 401 || resposta.status === 403) {
+      localStorage.removeItem(STORAGE_KEY);
+    } else {
+      // Falha de servidor não é logout: não declaramos a conta desconectada.
+      console.warn('Sessão temporariamente indisponível:', resposta.status);
+      const aviso = document.getElementById('authSessionNotice');
+      if (aviso) { aviso.textContent = 'Não foi possível verificar sua sessão. Atualize a página ou tente novamente.'; aviso.hidden = false; }
+      return;
+    }
+  } catch (erro) {
+    console.warn('Não foi possível sincronizar a sessão:', erro);
+    const aviso = document.getElementById('authSessionNotice');
+    if (aviso) { aviso.textContent = 'Sem conexão para validar sua sessão. Tente novamente.'; aviso.hidden = false; }
+    return;
+  }
+  renderUserState();
+}
+sincronizarSessaoInicial();
 carregarLivros();

@@ -23,7 +23,85 @@ verificarAcessoAdmin();
 
 const form = document.getElementById('formLivro');
 const tbody = document.querySelector('#tabelaLivros tbody');
+const filtroGenero = document.getElementById('filtroGenero');
+const filtroDisponivel = document.getElementById('filtroDisponivel');
+const filtroBuscaLivros = document.getElementById('filtroBuscaLivros');
+const btnLimparFiltrosLivros = document.getElementById('btnLimparFiltrosLivros');
+let livrosCarregados = [];
+
+function normalizarBusca(valor) {
+  return String(valor ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR').trim();
+}
+
+// Tradução apenas para apresentação: mantemos os valores originais no banco e no filtro.
+const GENEROS_PT = {
+  'fiction':'Ficção', 'non-fiction':'Não ficção', 'nonfiction':'Não ficção',
+  'fantasy':'Fantasia', 'science fiction':'Ficção científica', 'sci-fi':'Ficção científica',
+  'romance':'Romance', 'romantic fiction':'Romance', 'mystery':'Mistério',
+  'thriller':'Suspense', 'horror':'Terror', 'adventure':'Aventura',
+  'biography':'Biografia', 'autobiography':'Autobiografia', 'memoir':'Memórias',
+  'history':'História', 'historical fiction':'Ficção histórica',
+  'poetry':'Poesia', 'drama':'Drama', 'comics':'Quadrinhos', 'graphic novel':'Romance gráfico',
+  'young adult':'Literatura juvenil', 'children':'Infantil', "children's literature":'Literatura infantil',
+  "children's stories, danish":'Contos infantis', "children's stories":'Contos infantis',
+  'self-help':'Autoajuda', 'philosophy':'Filosofia', 'psychology':'Psicologia',
+  'religion':'Religião', 'spirituality':'Espiritualidade', 'science':'Ciência',
+  'technology':'Tecnologia', 'business':'Negócios', 'education':'Educação',
+  'classics':'Clássicos', 'classic':'Clássicos', 'literature':'Literatura',
+  'literary fiction':'Ficção literária', 'crime':'Policial', 'crime fiction':'Ficção policial',
+  'dystopian':'Distopia', 'dystopia':'Distopia', 'politics':'Política',
+  'social science':'Ciências sociais', 'travel':'Viagem', 'art':'Arte',
+  'humor':'Humor', 'cookbooks':'Culinária', 'cooking':'Culinária',
+  'health':'Saúde', 'sports':'Esportes', 'short stories':'Contos',
+  'essays':'Ensaios', 'reference':'Referência', 'language':'Linguagem',
+  'spanish language books':'Livros em espanhol', 'totalitarianism':'Totalitarismo',
+  'culpabilité':'Culpa', 'general':'Geral', 'other':'Outros'
+};
+function nomeGeneroPT(valor) {
+  const original = String(valor ?? '').trim();
+  const normalizado = normalizarBusca(original);
+  if (GENEROS_PT[normalizado]) return GENEROS_PT[normalizado];
+  if (/children.s stories/i.test(original)) return 'Contos infantis';
+  if (/fairy tales/i.test(original)) return 'Contos de fadas';
+  // Mantém valores antigos para consulta administrativa; novos cadastros
+  // já recebem exclusivamente gêneros normalizados no servidor.
+  return original || 'Não informado';
+}
+
+function atualizarFiltroGeneros() {
+  if (!filtroGenero) return;
+  const anterior = filtroGenero.value;
+  const generos = [...new Set(livrosCarregados.map(livro => String(livro.genero ?? '').trim()).filter(Boolean))]
+    .sort((a, b) => nomeGeneroPT(a).localeCompare(nomeGeneroPT(b), 'pt-BR'));
+  filtroGenero.replaceChildren(new Option('Todos', ''));
+  generos.forEach(genero => filtroGenero.add(new Option(nomeGeneroPT(genero), genero)));
+  filtroGenero.value = generos.includes(anterior) ? anterior : '';
+}
+
+function livrosFiltrados() {
+  const termo = normalizarBusca(filtroBuscaLivros?.value);
+  const genero = filtroGenero?.value || '';
+  const disponivel = filtroDisponivel?.value || '';
+  return livrosCarregados.filter(livro => {
+    const texto = normalizarBusca([livro.titulo, livro.autor, livro.editora, livro.genero, nomeGeneroPT(livro.genero)].join(' '));
+    const coincideBusca = !termo || texto.includes(termo);
+    const coincideGenero = !genero || livro.genero === genero;
+    const coincideDisponivel = !disponivel || String(livro.disponivel === true || livro.disponivel === 'true') === disponivel;
+    return coincideBusca && coincideGenero && coincideDisponivel;
+  });
+}
+
+[filtroGenero, filtroDisponivel].forEach(el => el?.addEventListener('change', renderizarTabelaLivros));
+filtroBuscaLivros?.addEventListener('input', renderizarTabelaLivros);
+btnLimparFiltrosLivros?.addEventListener('click', () => {
+  if (filtroGenero) filtroGenero.value = '';
+  if (filtroDisponivel) filtroDisponivel.value = '';
+  if (filtroBuscaLivros) filtroBuscaLivros.value = '';
+  renderizarTabelaLivros();
+});
+
 const btnIA = document.getElementById('btnIA');
+const iaFeedback = document.getElementById('iaFeedback');
 const btnProcessarMultiplos = document.getElementById('btnProcessarMultiplos');
 const btnSalvarTodosMultiplos = document.getElementById('btnSalvarTodosMultiplos');
 const multiIASaveAllStatus = document.getElementById('multiIASaveAllStatus');
@@ -44,39 +122,131 @@ const inputGenero = document.getElementById('genero');
 const inputPaginas = document.getElementById('numero_paginas');
 const inputIdioma = document.getElementById('idioma');
 const inputResumo = document.getElementById('resumo');
+const btnAlternarMultiplos = document.getElementById('btnAlternarMultiplos');
+const btnFecharMultiplos = document.getElementById('btnFecharMultiplos');
+const multiIABox = document.getElementById('multiIABox');
+const avisoPaginas = document.getElementById('avisoPaginas');
+const avisoResumo = document.getElementById('avisoResumo');
+const dadosLivroTitulo = document.getElementById('dadosLivroTitulo');
 
-// 1. CARREGAR LIVROS DO BANCO DE DADOS
+function alternarBuscaEmLote(abrir) {
+  if (!multiIABox || !btnAlternarMultiplos) return;
+  multiIABox.hidden = !abrir;
+  btnAlternarMultiplos.setAttribute('aria-expanded', String(abrir));
+  btnAlternarMultiplos.textContent = abrir ? '− Ocultar busca de vários livros' : '+ Adicionar vários livros';
+  if (abrir) {
+    multiIABox.scrollIntoView({behavior:'smooth', block:'nearest'});
+    inputListaTitulosIA?.focus({preventScroll:true});
+  } else btnAlternarMultiplos.focus({preventScroll:true});
+}
+btnAlternarMultiplos?.addEventListener('click', () => alternarBuscaEmLote(multiIABox.hidden));
+btnFecharMultiplos?.addEventListener('click', () => alternarBuscaEmLote(false));
+
+function limparSugestoesIA() {
+  if (avisoPaginas) { avisoPaginas.replaceChildren(); avisoPaginas.hidden = true; }
+  if (avisoResumo) { avisoResumo.textContent = ''; avisoResumo.hidden = true; }
+}
+
+
+// 1. CARREGAR, FILTRAR E EXIBIR LIVROS DO BANCO
+function criarCelula(texto, classe = '') {
+  const td = document.createElement('td');
+  if (classe) td.className = classe;
+  td.textContent = String(texto ?? '—');
+  return td;
+}
+
+function renderizarTabelaLivros() {
+  if (!tbody) return;
+  tbody.replaceChildren();
+  const livros = livrosFiltrados();
+  if (!livros.length) {
+    const tr = document.createElement('tr');
+    const td = criarCelula(livrosCarregados.length ? 'Nenhum livro corresponde aos filtros selecionados.' : 'Nenhum livro cadastrado.');
+    td.colSpan = 8;
+    td.className = 'admin-empty-state';
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
+
+  livros.forEach(livro => {
+    const tr = document.createElement('tr');
+    tr.dataset.bookId = String(livro.id);
+    const tdCapa = document.createElement('td');
+    tdCapa.className = 'admin-book-cover-cell';
+    const fallback = () => {
+      const div = document.createElement('div');
+      div.className = 'capa-miniatura';
+      div.textContent = String(livro.titulo || 'Livro').split(' ')[0];
+      return div;
+    };
+    if (livro.url_capa) {
+      const img = document.createElement('img');
+      img.src = livro.url_capa;
+      img.className = 'capa-miniatura';
+      img.alt = `Capa de ${livro.titulo || 'livro'}`;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      img.addEventListener('error', () => img.replaceWith(fallback()), { once: true });
+      tdCapa.appendChild(img);
+    } else tdCapa.appendChild(fallback());
+
+    const tdTitulo = criarCelula(livro.titulo, 'admin-book-title');
+    const tdAutor = criarCelula(livro.autor, 'admin-book-author');
+    const tdEditora = criarCelula(livro.editora, 'admin-book-publisher');
+    const tdGenero = criarCelula(nomeGeneroPT(livro.genero), 'admin-book-genre');
+    const tdAno = criarCelula(livro.ano_publicacao, 'admin-book-year');
+    const tdDisponivel = document.createElement('td');
+    const status = document.createElement('span');
+    const disponivel = livro.disponivel === true || livro.disponivel === 'true';
+    status.className = `admin-availability ${disponivel ? 'is-available' : 'is-unavailable'}`;
+    status.textContent = disponivel ? 'Sim' : 'Não';
+    tdDisponivel.appendChild(status);
+
+    const tdAcoes = document.createElement('td');
+    tdAcoes.className = 'admin-book-actions-cell';
+    const divAcoes = document.createElement('div');
+    divAcoes.className = 'admin-book-actions';
+    const btnEditar = document.createElement('button');
+    btnEditar.type = 'button';
+    btnEditar.className = 'btn-editar';
+    btnEditar.textContent = 'Editar';
+    btnEditar.addEventListener('click', () => editarLivro(livro.id));
+    const btnExcluir = document.createElement('button');
+    btnExcluir.type = 'button';
+    btnExcluir.className = 'btn-excluir';
+    btnExcluir.textContent = 'Excluir';
+    btnExcluir.addEventListener('click', () => excluirLivro(livro.id));
+    divAcoes.append(btnEditar, btnExcluir);
+    tdAcoes.appendChild(divAcoes);
+    tr.append(tdCapa, tdTitulo, tdAutor, tdEditora, tdGenero, tdAno, tdDisponivel, tdAcoes);
+    tbody.appendChild(tr);
+  });
+}
+
 async function carregarLivros() {
+  if (tbody) tbody.innerHTML = '<tr><td colspan="8" role="status">Carregando livros...</td></tr>';
   try {
     const res = await fetch('/api/livros');
+    if (!res.ok) throw new Error('Falha ao carregar o catálogo.');
     const livros = await res.json();
-    tbody.innerHTML = '';
-    
-    livros.forEach(livro => {
-      const tr = document.createElement('tr');
-      tr.dataset.bookId = String(livro.id);
-      const primeiraPalavra = livro.titulo.split(' ')[0];
-      
-      const capaHTML = livro.url_capa 
-        ? `<img src="${livro.url_capa}" class="capa-miniatura" alt="capa" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=\\'capa-miniatura\\'>${primeiraPalavra}</div>'">`
-        : `<div class="capa-miniatura">${primeiraPalavra}</div>`;
-      
-      tr.innerHTML = `
-        <td class="admin-book-cover-cell">${capaHTML}</td>
-        <td><strong class="admin-book-title" title="${livro.titulo}">${livro.titulo}</strong></td>
-        <td><span class="admin-book-author" title="${livro.autor}">${livro.autor}</span></td>
-        <td><span class="admin-book-genre" title="${livro.genero || '-'}">${livro.genero || '-'}</span></td>
-        <td class="admin-book-actions-cell">
-          <div class="admin-book-actions">
-            <button class="btn-editar" onclick="editarLivro(${livro.id})">Editar</button>
-            <button class="btn-excluir" onclick="excluirLivro(${livro.id})">Excluir</button>
-          </div>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
+    if (!Array.isArray(livros)) throw new Error('Resposta inválida do catálogo.');
+    livrosCarregados = livros;
+    atualizarFiltroGeneros();
+    renderizarTabelaLivros();
   } catch (erro) {
     console.error('Erro ao carregar livros:', erro);
+    if (tbody) {
+      tbody.replaceChildren();
+      const tr = document.createElement('tr');
+      const td = criarCelula('Não foi possível carregar os livros. Atualize a página para tentar novamente.');
+      td.colSpan = 8;
+      td.setAttribute('role', 'alert');
+      td.className = 'admin-empty-state';
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+    }
   }
 }
 
@@ -336,65 +506,101 @@ btnProcessarMultiplos.addEventListener('click', async () => {
   }
 });
 
-// 2. A MÁGICA DA INTELIGÊNCIA ARTIFICIAL
+// 2. Pesquisa bibliográfica: fontes oficiais, correspondência de título e revisão manual.
+function mostrarEstadoIA(mensagem, classe = '') {
+  if (!iaFeedback) return;
+  iaFeedback.hidden = false;
+  iaFeedback.className = `ia-feedback ${classe}`;
+  iaFeedback.replaceChildren();
+  const paragrafo = document.createElement('p');
+  paragrafo.textContent = mensagem;
+  iaFeedback.appendChild(paragrafo);
+}
+
 btnIA.addEventListener('click', async () => {
   const titulo = inputTitulo.value.trim();
-  
-  if(!titulo) {
-    alert('⚠️ Por favor, digite o título do livro primeiro!');
-    return;
-  }
+  if (!titulo) { mostrarEstadoIA('Informe um título ou ISBN para iniciar a pesquisa.', 'is-error'); return; }
 
-  btnIA.textContent = 'Consultando...';
+  limparSugestoesIA();
   btnIA.disabled = true;
-
-  inputAutor.value = '';
-  inputEditora.value = '';
-  inputAno.value = '';
-  inputGenero.value = '';
-  inputPaginas.value = '';
-  inputIdioma.value = '';
-  inputResumo.value = '';
-  inputCapa.value = '';
-
+  btnIA.textContent = 'Consultando catálogos...';
+  mostrarEstadoIA('Pesquisando Google Books, Open Library e títulos alternativos quando necessário. Isso pode levar alguns segundos.');
   try {
     const res = await fetch('/api/ia/preencher', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ titulo })
+      method: 'POST', headers: { 'Content-Type':'application/json' }, body:JSON.stringify({titulo})
     });
-
     const dados = await res.json();
-    if (res.ok) {
-      inputTitulo.value = dados.titulo || titulo;
-      inputAutor.value = dados.autor || '';
-      inputEditora.value = dados.editora || '';
-      inputAno.value = dados.ano_publicacao || '';
-      inputGenero.value = dados.genero || '';
-      inputPaginas.value = dados.numero_paginas || '';
-      inputIdioma.value = dados.idioma || '';
-      inputResumo.value = dados.resumo || dados.descricao || '';
-      inputCapa.value = dados.url_capa || '';
+    if (!res.ok) {
+      const etapas = Array.isArray(dados.tentativas) ? dados.tentativas.length : 0;
+      throw new Error(`${dados.erro || 'Livro não encontrado.'}${etapas ? ` (${etapas} etapas de consulta realizadas)` : ''} Preencha manualmente ou tente usar o ISBN.`);
+    }
 
-      const camposAusentes = [
-        !dados.autor && 'autor',
-        !dados.editora && 'editora',
-        !dados.ano_publicacao && 'ano de publicação',
-        !dados.genero && 'gênero',
-        !dados.numero_paginas && 'número de páginas',
-        !dados.resumo && 'resumo',
-        !dados.url_capa && 'capa'
-      ].filter(Boolean);
-      const avisoCampos = camposAusentes.length
-        ? `\n\nA fonte não fornece: ${camposAusentes.join(', ')}. Complete esses campos manualmente antes de salvar.`
-        : '';
-      alert(`✨ Dados encontrados em ${dados.fonte_dados || 'um catálogo de livros'}. Confira as informações antes de salvar.${avisoCampos}`);
+    // Atualiza o formulário apenas depois de encontrar uma correspondência segura.
+    // Campos ausentes ficam vazios; não substituímos por informações fictícias.
+    inputTitulo.value = dados.titulo || titulo;
+    inputAutor.value = dados.autor || '';
+    inputEditora.value = dados.editora || '';
+    inputAno.value = dados.ano_publicacao || '';
+    inputGenero.value = nomeGeneroPT(dados.genero || '');
+    inputPaginas.value = dados.numero_paginas || '';
+    inputIdioma.value = dados.idioma || '';
+    inputResumo.value = dados.resumo || '';
+    inputCapa.value = dados.url_capa || '';
+    limparSugestoesIA();
+    if (dados.paginas_sugeridas?.numero && !dados.numero_paginas && avisoPaginas) {
+      const sugestao = dados.paginas_sugeridas;
+      avisoPaginas.hidden = false;
+      const frase = document.createElement('span');
+      frase.textContent = `Outra edição pode ter cerca de ${sugestao.numero} páginas (${sugestao.fonte}). Confira seu exemplar. `;
+      const usar = document.createElement('button');
+      usar.type = 'button';
+      usar.className = 'btn-use-estimated-pages';
+      usar.textContent = 'Usar como estimativa';
+      usar.addEventListener('click', () => {
+        inputPaginas.value = sugestao.numero;
+        avisoPaginas.textContent = `Estimativa aplicada: ${sugestao.numero} páginas. Confirme na edição antes de salvar.`;
+      });
+      avisoPaginas.append(frase, usar);
+    }
+    if (avisoResumo) {
+      avisoResumo.hidden = false;
+      avisoResumo.className = `ia-summary-note ${dados.resumo_revisao_obrigatoria ? 'needs-review' : ''}`;
+      const fonteResumo = String(dados.campos_fonte?.resumo || '');
+      avisoResumo.textContent = !dados.resumo
+        ? 'Não foi encontrado um resumo confiável em português do Brasil. Escreva uma apresentação original da obra antes de salvar.'
+        : fonteResumo.startsWith('Resumo editorial')
+          ? 'Resumo editorial original em português do Brasil. Confira se corresponde ao conto ou livro que será cadastrado.'
+          : dados.resumo_revisao_obrigatoria
+            ? 'Resumo em português obtido de fonte complementar ou elaborado com apoio de IA. Revise os fatos antes de publicar.'
+            : 'Resumo recuperado de catálogo bibliográfico em português. Confira se descreve a mesma obra e respeite os direitos da fonte.';
+    }
+
+    const ausentes = dados.campos_ausentes || [];
+    const traduzir = {url_capa:'capa', ano_publicacao:'ano', numero_paginas:'número de páginas', resumo:'resumo', genero:'gênero', idioma:'idioma', editora:'editora', autor:'autor'};
+    mostrarEstadoIA(`Livro localizado: ${dados.titulo || titulo}. Fontes: ${(dados.fontes || []).map(f=>f.nome).join(', ') || dados.fonte_dados || 'catálogo'}. ${ausentes.length ? `Preencha ou confirme os campos pendentes: ${ausentes.map(c=>traduzir[c] || c).join(', ')}.` : 'Todos os campos principais foram encontrados.'} ${dados.aviso || 'Confira a edição antes de salvar.'}`, ausentes.length ? 'is-warning' : 'is-success');
+    // Campos da busca individual ficam logo abaixo, sem a busca em lote separando o formulário.
+    dadosLivroTitulo?.classList.add('has-search-results');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      dadosLivroTitulo?.scrollIntoView({block:'start'});
     } else {
-      throw new Error(dados.erro || 'Não foi possível localizar esse livro.');
+      dadosLivroTitulo?.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+    if (Array.isArray(dados.fontes) && iaFeedback) {
+      const links = document.createElement('div');
+      links.className = 'ia-feedback-sources';
+      for (const fonte of dados.fontes.filter(f=>/^https:\/\//.test(f.url || ''))) {
+        const a = document.createElement('a');
+        a.href = fonte.url;
+        a.rel = 'noopener noreferrer';
+        a.target = '_blank';
+        a.textContent = `Conferir ${fonte.nome}`;
+        links.append(a);
+      }
+      iaFeedback.appendChild(links);
     }
   } catch (erro) {
-    console.error(erro);
-    alert(erro.message || 'Erro de conexão ao consultar o catálogo de livros.');
+    console.error('Erro na pesquisa bibliográfica:', erro);
+    mostrarEstadoIA(erro.message || 'Falha ao consultar o catálogo. Tente novamente ou preencha manualmente.', 'is-error');
   } finally {
     btnIA.textContent = 'Procurar um livro';
     btnIA.disabled = false;
@@ -454,7 +660,7 @@ window.excluirLivro = async (id) => {
       const res = await fetch(`/api/livros/${id}`, { method: 'DELETE' });
       const resultado = await res.json();
       if (!res.ok) throw new Error(resultado.erro || 'Não foi possível excluir o livro.');
-      linha?.remove();
+      await carregarLivros();
     } catch(erro) {
       alert(erro.message || 'Erro ao excluir o livro.');
       if (botao) {

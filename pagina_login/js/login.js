@@ -10,9 +10,7 @@ const registerAvatarGrid = document.getElementById('registerAvatarGrid');
 const regAvatarInput = document.getElementById('regAvatar');
 
 let activeEmail = '';
-let verificationTicket = '';
 let pendingWallet = '';
-let walletTicket = '';
 let pendingOAuthTicket = '';
 let resendTimer;
 let resendSeconds = 0;
@@ -37,9 +35,14 @@ async function readResponse(response) {
   return data;
 }
 
-function saveUser(usuario) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(usuario));
-  window.location.href = '/';
+async function saveUser(usuario) {
+  // Confere se o cookie de sessão foi aceito antes de sair do login.
+  const resposta = await fetch('/api/auth/perfil', { credentials: 'same-origin', cache: 'no-store' });
+  if (!resposta.ok) throw new Error('Sua sessão não foi confirmada. Verifique os cookies e tente novamente.');
+  const dados = await resposta.json();
+  if (!dados.usuario) throw new Error('Não foi possível recuperar o perfil autenticado.');
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(dados.usuario));
+  window.location.assign((dados.usuario.onboarding_completed !== true || !String(dados.usuario.username || '').trim()) ? '/perfil/completar.html' : '/');
 }
 
 function startResendCountdown(seconds = 60) {
@@ -126,11 +129,11 @@ formOtp.addEventListener('submit', async (event) => {
 
     clearInterval(resendTimer);
     if (data.usuario) {
-      saveUser(data.usuario);
+      await saveUser(data.usuario);
       return;
     }
 
-    verificationTicket = data.verificationTicket;
+    // O código foi verificado no backend, agora podemos prosseguir para registro
     pendingOAuthTicket = data.oauthTicket || pendingOAuthTicket;
     document.getElementById('registerEmailLabel').textContent = activeEmail;
     if (pendingOAuthTicket) {
@@ -162,11 +165,10 @@ formRegister.addEventListener('submit', async (event) => {
   const payload = {
     email: activeEmail,
     nome: document.getElementById('regNome').value.trim(),
+    code: otpCode.value.trim(), // Enviar o código verificado para registro
     username: document.getElementById('regUsername').value.trim(),
     avatar: regAvatarInput.value,
     wallet: pendingWallet,
-    verificationTicket,
-    walletTicket,
     oauthTicket: pendingOAuthTicket
   };
 
@@ -176,7 +178,7 @@ formRegister.addEventListener('submit', async (event) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     }));
-    saveUser(data.usuario);
+    await saveUser(data.usuario);
   } catch (error) {
     showMessage(error.message);
   } finally {
@@ -201,22 +203,21 @@ document.getElementById('btnConectarMetaMask').addEventListener('click', async (
     }));
     const signature = await window.ethereum.request({
       method: 'personal_sign',
-      params: [challenge.message, accounts[0]]
+      params: [challenge.nonce, accounts[0]]  // Usar o nonce completo
     });
     const data = await readResponse(await fetch('/api/auth/wallet/verify', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ wallet, message: challenge.message, signature })
+      body: JSON.stringify({ wallet, signature })
     }));
 
     if (data.usuario) {
-      saveUser(data.usuario);
+      await saveUser(data.usuario);
       return;
     }
 
     pendingWallet = wallet;
-    walletTicket = data.walletTicket;
-    if (!walletTicket) throw new Error('Não foi possível confirmar a carteira. Tente novamente.');
+    if (!data.ok) throw new Error('Não foi possível confirmar a carteira. Tente novamente.');
     showMessage('Carteira conectada. Informe seu e-mail para verificar e criar a conta.', false);
     loginEmail.focus();
   } catch (error) {
@@ -250,7 +251,7 @@ async function completeOAuthLogin() {
       loginEmail.focus();
       return;
     }
-    saveUser(data.usuario);
+    await saveUser(data.usuario);
   } catch (error) {
     showMessage(error.message);
     window.history.replaceState({}, '', window.location.pathname);
@@ -258,3 +259,40 @@ async function completeOAuthLogin() {
 }
 
 completeOAuthLogin();
+
+
+// Login Solana: assinatura de mensagem, sem operação financeira.
+function solanaProvider(phantomOnly) {
+  if (phantomOnly) return window.phantom?.solana || (window.solana?.isPhantom ? window.solana : null);
+  return window.solana || window.phantom?.solana || null;
+}
+async function loginSolana(phantomOnly) {
+  const button = document.getElementById(phantomOnly ? 'btnConectarPhantom' : 'btnConectarSolana');
+  if (button.disabled) return;
+  const provider = solanaProvider(phantomOnly);
+  if (!provider || typeof provider.connect !== 'function' || typeof provider.signMessage !== 'function') {
+    showMessage(phantomOnly ? 'Phantom não encontrada. Abra o BookHub no navegador da Phantom ou habilite sua extensão.' : 'Nenhuma carteira Solana compatível com assinatura de mensagens foi encontrada.');
+    return;
+  }
+  button.disabled = true;
+  try {
+    const connected = await provider.connect();
+    const wallet = (connected?.publicKey || provider.publicKey)?.toBase58?.();
+    if (!wallet) throw new Error('Não foi possível identificar sua carteira Solana.');
+    const challenge = await readResponse(await fetch('/api/auth/solana/challenge', {
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet})
+    }));
+    const signed = await provider.signMessage(new TextEncoder().encode(challenge.message),'utf8');
+    const bytes = signed?.signature;
+    if (!(bytes instanceof Uint8Array) || bytes.length !== 64) throw new Error('Assinatura inválida retornada pela carteira.');
+    const signature = Array.from(bytes, b => b.toString(16).padStart(2,'0')).join('');
+    const result = await readResponse(await fetch('/api/auth/solana/verify', {
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet,signature})
+    }));
+    if (!result.usuario) throw new Error('O login não foi concluído.');
+    await saveUser(result.usuario);
+  } catch(error) { showMessage(error.message || 'Não foi possível autenticar com a carteira.'); }
+  finally { button.disabled = false; }
+}
+document.getElementById('btnConectarPhantom')?.addEventListener('click',()=>loginSolana(true));
+document.getElementById('btnConectarSolana')?.addEventListener('click',()=>loginSolana(false));
